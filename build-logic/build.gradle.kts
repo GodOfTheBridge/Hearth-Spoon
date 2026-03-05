@@ -2,7 +2,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.example.hearthspoon.buildlogic"
+group = "com.gotb.heartandspoon.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

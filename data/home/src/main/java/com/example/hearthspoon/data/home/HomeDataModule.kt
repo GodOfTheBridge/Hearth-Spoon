@@ -1,6 +1,6 @@
-package com.example.hearthspoon.data.home
+package com.gotb.heartandspoon.data.home
 
-import com.example.hearthspoon.domain.api.HomeRepository
+import com.gotb.heartandspoon.domain.api.HomeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

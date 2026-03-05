@@ -1,6 +1,6 @@
-package com.example.hearthspoon.feature.home
+package com.gotb.heartandspoon.feature.home
 
-import com.example.hearthspoon.core.model.HomeItem
+import com.gotb.heartandspoon.core.model.HomeItem
 
 data class HomeState(
     val isLoading: Boolean = false,

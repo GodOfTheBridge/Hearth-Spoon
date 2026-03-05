@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.hearthspoon"
+    namespace = "com.gotb.heartandspoon"
 }
 
 dependencies {

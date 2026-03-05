@@ -1,4 +1,4 @@
-package com.example.hearthspoon
+package com.gotb.heartandspoon
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.hearthspoon.core.designsystem.HearthSpoonTheme
-import com.example.hearthspoon.feature.home.HomeRoute
+import com.gotb.heartandspoon.core.designsystem.HearthSpoonTheme
+import com.gotb.heartandspoon.feature.home.HomeRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,6 +1,6 @@
-package com.example.hearthspoon.domain.api
+package com.gotb.heartandspoon.domain.api
 
-import com.example.hearthspoon.core.model.HomeItem
+import com.gotb.heartandspoon.core.model.HomeItem
 
 interface HomeRepository {
     suspend fun getHomeItems(): List<HomeItem>

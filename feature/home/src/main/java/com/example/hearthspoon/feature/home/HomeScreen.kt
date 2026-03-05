@@ -1,4 +1,4 @@
-package com.example.hearthspoon.feature.home
+package com.gotb.heartandspoon.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,8 +1,8 @@
-package com.example.hearthspoon.feature.home
+package com.gotb.heartandspoon.feature.home
 
 import androidx.lifecycle.viewModelScope
-import com.example.hearthspoon.core.ui.mvi.MviViewModel
-import com.example.hearthspoon.domain.api.HomeRepository
+import com.gotb.heartandspoon.core.ui.mvi.MviViewModel
+import com.gotb.heartandspoon.domain.api.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch

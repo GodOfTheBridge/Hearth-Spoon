@@ -3,7 +3,7 @@ plugins {
     id("hearth.android.hilt")
 }
 
-android { namespace = "com.example.hearthspoon.core.network" }
+android { namespace = "com.gotb.heartandspoon.core.network" }
 
 dependencies {
     implementation(libs.ktor.client.core)

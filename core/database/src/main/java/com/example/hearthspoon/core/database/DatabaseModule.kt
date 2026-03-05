@@ -1,4 +1,4 @@
-package com.example.hearthspoon.core.database
+package com.gotb.heartandspoon.core.database
 
 import android.content.Context
 import androidx.room.Room
