@@ -1,4 +1,4 @@
-package com.example.hearthspoon.core.network
+package com.gotb.heartandspoon.core.network
 
 import dagger.Module
 import dagger.Provides

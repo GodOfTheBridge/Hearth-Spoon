@@ -1,9 +1,9 @@
-package com.example.hearthspoon.data.home
+package com.gotb.heartandspoon.data.home
 
-import com.example.hearthspoon.core.database.HomeDao
-import com.example.hearthspoon.core.database.HomeEntity
-import com.example.hearthspoon.core.model.HomeItem
-import com.example.hearthspoon.domain.api.HomeRepository
+import com.gotb.heartandspoon.core.database.HomeDao
+import com.gotb.heartandspoon.core.database.HomeEntity
+import com.gotb.heartandspoon.core.model.HomeItem
+import com.gotb.heartandspoon.domain.api.HomeRepository
 import io.ktor.client.HttpClient
 import javax.inject.Inject
 

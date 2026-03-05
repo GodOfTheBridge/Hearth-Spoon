@@ -1,4 +1,4 @@
-package com.example.hearthspoon.core.database
+package com.gotb.heartandspoon.core.database
 
 import androidx.room.Dao
 import androidx.room.Insert

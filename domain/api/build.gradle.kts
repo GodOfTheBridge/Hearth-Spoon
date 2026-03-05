@@ -1,6 +1,6 @@
 plugins { id("hearth.android.library") }
 
-android { namespace = "com.example.hearthspoon.domain.api" }
+android { namespace = "com.gotb.heartandspoon.domain.api" }
 
 dependencies {
     implementation(project(":core:model"))

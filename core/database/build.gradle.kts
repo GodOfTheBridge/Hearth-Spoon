@@ -4,7 +4,7 @@ plugins {
     id("hearth.android.room")
 }
 
-android { namespace = "com.example.hearthspoon.core.database" }
+android { namespace = "com.gotb.heartandspoon.core.database" }
 
 dependencies {
     implementation(project(":core:model"))

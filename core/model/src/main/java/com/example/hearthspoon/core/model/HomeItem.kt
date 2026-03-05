@@ -1,4 +1,4 @@
-package com.example.hearthspoon.core.model
+package com.gotb.heartandspoon.core.model
 
 data class HomeItem(
     val id: Long,

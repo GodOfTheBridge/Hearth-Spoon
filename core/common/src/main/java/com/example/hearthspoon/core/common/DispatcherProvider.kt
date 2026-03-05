@@ -1,4 +1,4 @@
-package com.example.hearthspoon.core.common
+package com.gotb.heartandspoon.core.common
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

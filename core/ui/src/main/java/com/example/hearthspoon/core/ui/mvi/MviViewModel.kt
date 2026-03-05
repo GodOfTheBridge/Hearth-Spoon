@@ -1,4 +1,4 @@
-package com.example.hearthspoon.core.ui.mvi
+package com.gotb.heartandspoon.core.ui.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

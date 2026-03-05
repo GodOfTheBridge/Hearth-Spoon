@@ -1,4 +1,4 @@
-package com.example.hearthspoon
+package com.gotb.heartandspoon
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
