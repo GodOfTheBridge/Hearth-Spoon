@@ -3,7 +3,7 @@ plugins {
     id("hearth.android.hilt")
 }
 
-android { namespace = "com.example.hearthspoon.feature.home" }
+android { namespace = "com.gotb.heartandspoon.feature.home" }
 
 dependencies {
     implementation(project(":core:ui"))

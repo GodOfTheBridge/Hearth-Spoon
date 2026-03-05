@@ -1,6 +1,6 @@
 plugins { id("hearth.android.library") }
 
-android { namespace = "com.example.hearthspoon.core.designsystem" }
+android { namespace = "com.gotb.heartandspoon.core.designsystem" }
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
