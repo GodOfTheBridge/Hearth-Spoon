@@ -1,5 +1,6 @@
 plugins {
     id("hearth.android.application")
+    id("hearth.android.compose")
     id("hearth.android.hilt")
 }
 
@@ -8,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.activity.compose)
     implementation(project(":core:designsystem"))
     implementation(project(":feature:home"))
     implementation(project(":data:home"))

@@ -1,9 +1,9 @@
-plugins { id("hearth.android.library") }
+plugins {
+    id("hearth.android.library")
+    id("hearth.android.compose")
+}
 
 android { namespace = "com.gotb.heartandspoon.core.designsystem" }
 
 dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material3)
 }
