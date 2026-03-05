@@ -3,22 +3,11 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    commonExtension: CommonExtension,
 ) {
-    commonExtension.apply {
-        compileSdk = 34
-        defaultConfig {
-            minSdk = 24
-        }
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        }
-        buildFeatures {
-            compose = true
-        }
-        composeOptions {
-            kotlinCompilerExtensionVersion = "1.5.14"
-        }
-    }
+    commonExtension.compileSdk = 34
+    commonExtension.defaultConfig.minSdk = 24
+    commonExtension.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
+    commonExtension.compileOptions.targetCompatibility = JavaVersion.VERSION_17
+    commonExtension.buildFeatures.compose = true
 }

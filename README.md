@@ -8,3 +8,9 @@ Android Kotlin Compose multi-module template:
 - `feature:home`
 
 Includes base MVI (`StateFlow` + `Channel` effects), Hilt DI, Ktor client, Room database, and build-logic convention plugins with version catalog.
+
+
+## Requirements
+
+- JDK 17 (project is configured for Java 17; JDK 21/25 is not required).
+- Android SDK configured via `ANDROID_HOME` or `local.properties` (`sdk.dir=...`).
