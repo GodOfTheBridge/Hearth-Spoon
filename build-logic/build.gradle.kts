@@ -32,5 +32,9 @@ gradlePlugin {
             id = "hearth.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
+        register("androidCompose") {
+            id = "hearth.android.compose"
+            implementationClass = "AndroidComposeConventionPlugin"
+        }
     }
 }

@@ -9,5 +9,4 @@ internal fun Project.configureKotlinAndroid(
     commonExtension.defaultConfig.minSdk = 24
     commonExtension.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
     commonExtension.compileOptions.targetCompatibility = JavaVersion.VERSION_17
-    commonExtension.buildFeatures.compose = true
 }
