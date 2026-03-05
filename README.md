@@ -1,4 +1,4 @@
-# Hearth Spoon
+# Hearth & Spoon
 
 Android Kotlin Compose multi-module template:
 - `app`
