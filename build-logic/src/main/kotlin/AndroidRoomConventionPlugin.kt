@@ -7,9 +7,9 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
         pluginManager.apply("com.google.devtools.ksp")
 
         dependencies {
-            add("implementation", "androidx.room:room-runtime:2.7.2")
-            add("implementation", "androidx.room:room-ktx:2.7.2")
-            add("ksp", "androidx.room:room-compiler:2.7.2")
+            add("implementation", "androidx.room:room-runtime:2.8.4")
+            add("implementation", "androidx.room:room-ktx:2.8.4")
+            add("ksp", "androidx.room:room-compiler:2.8.4")
         }
     }
 }

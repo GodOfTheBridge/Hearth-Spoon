@@ -5,7 +5,7 @@ import org.gradle.api.Project
 internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension,
 ) {
-    commonExtension.compileSdk = 34
+    commonExtension.compileSdk = 36
     commonExtension.defaultConfig.minSdk = 24
     commonExtension.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
     commonExtension.compileOptions.targetCompatibility = JavaVersion.VERSION_17

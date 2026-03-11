@@ -19,7 +19,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         }
 
         dependencies {
-            add("implementation", "androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+            add("implementation", "androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
         }
     }
 }

@@ -12,7 +12,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
         }
 
         dependencies {
-            add("implementation", platform("androidx.compose:compose-bom:2024.09.00"))
+            add("implementation", platform("androidx.compose:compose-bom:2026.01.01"))
             add("implementation", "androidx.compose.runtime:runtime")
             add("implementation", "androidx.compose.ui:ui")
             add("implementation", "androidx.compose.material3:material3")
