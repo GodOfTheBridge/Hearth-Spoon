@@ -2,6 +2,7 @@ plugins {
     id("hearth.android.application")
     id("hearth.android.compose")
     id("hearth.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -13,9 +14,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(project(":core:designsystem"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:profile"))
     implementation(project(":data:home"))
 
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 }
-

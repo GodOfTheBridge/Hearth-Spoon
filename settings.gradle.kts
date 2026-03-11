@@ -27,5 +27,6 @@ include(
     ":core:database",
     ":domain:api",
     ":feature:home",
+    ":feature:profile",
     ":data:home",
 )

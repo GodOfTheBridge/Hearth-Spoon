@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -22,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun HomeRoute(
+    onOpenDetails: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -38,6 +40,7 @@ fun HomeRoute(
     HomeScreen(
         state = state,
         snackbarHostState = snackbarHostState,
+        onOpenDetails = onOpenDetails,
     )
 }
 
@@ -45,6 +48,7 @@ fun HomeRoute(
 private fun HomeScreen(
     state: HomeState,
     snackbarHostState: SnackbarHostState,
+    onOpenDetails: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -52,7 +56,10 @@ private fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(text = "Home", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Главная", style = MaterialTheme.typography.headlineMedium)
+        Button(onClick = onOpenDetails) {
+            Text(text = "Открыть внутренний экран")
+        }
         if (state.isLoading) {
             CircularProgressIndicator()
         }
