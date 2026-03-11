@@ -9,5 +9,6 @@ dependencies {
     implementation(project(":domain:api"))
     implementation(project(":core:model"))
     implementation(project(":core:network"))
+    implementation(libs.ktor.client.core)
     implementation(project(":core:database"))
 }

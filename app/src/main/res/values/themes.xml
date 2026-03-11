@@ -1,3 +1,4 @@
 <resources>
-    <style name="Theme.HearthSpoon" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.HearthSpoon" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>
+
