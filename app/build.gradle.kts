@@ -13,9 +13,11 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(project(":core:designsystem"))
+    implementation(project(":domain:api"))
     implementation(project(":feature:home"))
     implementation(project(":feature:profile"))
     implementation(project(":data:home"))
+    implementation(project(":data:settings"))
 
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)

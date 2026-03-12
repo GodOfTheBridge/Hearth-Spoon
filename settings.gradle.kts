@@ -29,4 +29,5 @@ include(
     ":feature:home",
     ":feature:profile",
     ":data:home",
+    ":data:settings",
 )
