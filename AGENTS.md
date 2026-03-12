@@ -5,6 +5,11 @@ This repository is an Android project built with Kotlin and Gradle.
 Follow the existing architecture, naming, and module boundaries.
 Prefer the smallest correct change that fully solves the task.
 
+## Документация
+- Для локального запуска и сборки используй `README.md`.
+- Для архитектурных решений и устойчивых правил используй `ARCHITECTURE.md`.
+- При изменении устойчивых архитектурных правил обновляй соответствующую документацию в том же изменении.
+
 ## Core rules
 - Read nearby code before editing and match the existing architecture, naming, and style.
 - Change only files required for the task.
