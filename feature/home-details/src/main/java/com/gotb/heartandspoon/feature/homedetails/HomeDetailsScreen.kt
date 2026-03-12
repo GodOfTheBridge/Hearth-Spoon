@@ -1,4 +1,4 @@
-package com.gotb.heartandspoon.feature.home
+п»їpackage com.gotb.heartandspoon.feature.homedetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,9 +19,12 @@ fun HomeDetailsRoute(onBack: () -> Unit) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(text = "Внутренний экран", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = "\u0412\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0439 \u044d\u043a\u0440\u0430\u043d",
+            style = MaterialTheme.typography.headlineMedium,
+        )
         Button(onClick = onBack) {
-            Text(text = "Назад")
+            Text(text = "\u041d\u0430\u0437\u0430\u0434")
         }
     }
 }

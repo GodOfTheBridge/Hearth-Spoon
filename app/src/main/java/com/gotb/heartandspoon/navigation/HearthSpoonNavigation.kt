@@ -17,8 +17,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.gotb.heartandspoon.feature.home.HomeDetailsRoute
 import com.gotb.heartandspoon.feature.home.HomeRoute
+import com.gotb.heartandspoon.feature.homedetails.HomeDetailsRoute
 import com.gotb.heartandspoon.feature.profile.ProfileRoute
 
 @Composable
@@ -88,8 +88,8 @@ private enum class HearthSpoonTopLevelDestination(
     val label: String,
     val rootKey: HearthSpoonNavKey,
 ) {
-    HOME(label = "Главная", rootKey = Home),
-    PROFILE(label = "Профиль", rootKey = Profile),
+    HOME(label = "\u0413\u043b\u0430\u0432\u043d\u0430\u044f", rootKey = Home),
+    PROFILE(label = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c", rootKey = Profile),
 }
 
 private fun NavBackStack<NavKey>.navigateToTopLevel(destination: HearthSpoonTopLevelDestination) {

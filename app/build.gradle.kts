@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":domain:api"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:home-details"))
     implementation(project(":feature:profile"))
     implementation(project(":data:home"))
     implementation(project(":data:settings"))

@@ -1,4 +1,4 @@
-package com.gotb.heartandspoon.feature.home
+п»їpackage com.gotb.heartandspoon.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,9 +56,12 @@ private fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(text = "Главная", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = "\u0413\u043b\u0430\u0432\u043d\u0430\u044f",
+            style = MaterialTheme.typography.headlineMedium,
+        )
         Button(onClick = onOpenDetails) {
-            Text(text = "Открыть внутренний экран")
+            Text(text = "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0432\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0439 \u044d\u043a\u0440\u0430\u043d")
         }
         if (state.isLoading) {
             CircularProgressIndicator()
