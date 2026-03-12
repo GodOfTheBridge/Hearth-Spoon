@@ -11,7 +11,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gotb.heartandspoon.core.designsystem.HSSwitch
 import com.gotb.heartandspoon.core.model.ThemeMode
 
 @Composable
@@ -85,7 +85,7 @@ private fun ProfileContent(
                     Text(text = themeModeLabel(themeMode = state.themeMode))
                 },
                 trailingContent = {
-                    Switch(
+                    HSSwitch(
                         checked = isDarkThemeEnabled,
                         onCheckedChange = { isChecked ->
                             val selectedThemeMode =

@@ -7,6 +7,7 @@ plugins {
 android { namespace = "com.gotb.heartandspoon.feature.profile" }
 
 dependencies {
+    implementation(project(":core:designsystem"))
     implementation(project(":domain:api"))
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)

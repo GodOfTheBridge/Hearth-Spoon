@@ -6,5 +6,6 @@ plugins {
 android { namespace = "com.gotb.heartandspoon.core.designsystem" }
 
 dependencies {
+    implementation("androidx.compose.animation:animation")
     implementation(project(":core:model"))
 }
