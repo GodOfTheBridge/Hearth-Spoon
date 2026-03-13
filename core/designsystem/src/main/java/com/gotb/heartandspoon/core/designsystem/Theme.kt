@@ -20,31 +20,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import com.gotb.heartandspoon.core.model.ThemeMode
 
 @Composable
 fun HearthSpoonTheme(
-    themeMode: ThemeMode,
+    isDarkTheme: Boolean,
     content: @Composable () -> Unit,
 ) {
-    val animatedColorScheme = rememberAnimatedColorScheme(themeMode = themeMode)
-    val contentAlpha = rememberThemeContentAlpha(themeMode = themeMode)
+    val animatedColorScheme = rememberAnimatedColorScheme(isDarkTheme = isDarkTheme)
+    val contentAlpha = rememberThemeContentAlpha(isDarkTheme = isDarkTheme)
 
     MaterialTheme(
         colorScheme = animatedColorScheme,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Crossfade(
-                targetState = themeMode,
+                targetState = isDarkTheme,
                 modifier = Modifier.fillMaxSize(),
                 animationSpec = hsStandardMotionSpec(),
                 label = "themeBackdrop",
-            ) { currentThemeMode ->
+            ) { currentIsDarkTheme ->
                 Box(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(resolveColorScheme(themeMode = currentThemeMode).background),
+                            .background(resolveColorScheme(isDarkTheme = currentIsDarkTheme).background),
                 )
             }
 
@@ -60,18 +59,18 @@ fun HearthSpoonTheme(
     }
 }
 
-private fun resolveColorScheme(themeMode: ThemeMode) =
-    when (themeMode) {
-        ThemeMode.Light -> hearthSpoonLightColorScheme
-        ThemeMode.Dark -> hearthSpoonDarkColorScheme
+private fun resolveColorScheme(isDarkTheme: Boolean) =
+    when (isDarkTheme) {
+        true -> hearthSpoonDarkColorScheme
+        false -> hearthSpoonLightColorScheme
     }
 
 @Composable
-private fun rememberAnimatedColorScheme(themeMode: ThemeMode): ColorScheme {
-    val targetColorScheme = resolveColorScheme(themeMode = themeMode)
+private fun rememberAnimatedColorScheme(isDarkTheme: Boolean): ColorScheme {
+    val targetColorScheme = resolveColorScheme(isDarkTheme = isDarkTheme)
     val transition =
         updateTransition(
-            targetState = themeMode,
+            targetState = isDarkTheme,
             label = "themeColorSchemeTransition",
         )
 
@@ -177,14 +176,14 @@ private fun rememberAnimatedColorScheme(themeMode: ThemeMode): ColorScheme {
 }
 
 @Composable
-private fun rememberThemeContentAlpha(themeMode: ThemeMode): Float {
+private fun rememberThemeContentAlpha(isDarkTheme: Boolean): Float {
     val contentAlpha = remember { Animatable(1f) }
-    var previousThemeMode by remember { mutableStateOf(themeMode) }
+    var previousThemeMode by remember { mutableStateOf(isDarkTheme) }
 
-    LaunchedEffect(themeMode) {
-        if (previousThemeMode == themeMode) return@LaunchedEffect
+    LaunchedEffect(isDarkTheme) {
+        if (previousThemeMode == isDarkTheme) return@LaunchedEffect
 
-        previousThemeMode = themeMode
+        previousThemeMode = isDarkTheme
         contentAlpha.snapTo(themeContentMinAlpha)
         contentAlpha.animateTo(
             targetValue = 1f,
@@ -196,15 +195,15 @@ private fun rememberThemeContentAlpha(themeMode: ThemeMode): Float {
 }
 
 @Composable
-private fun Transition<ThemeMode>.animateThemeColor(
+private fun Transition<Boolean>.animateThemeColor(
     label: String,
     targetValueByState: @Composable (ColorScheme) -> Color,
 ): State<Color> =
     animateColor(
         transitionSpec = { hsStandardMotionSpec() },
         label = label,
-        targetValueByState = { themeMode ->
-            targetValueByState(resolveColorScheme(themeMode = themeMode))
+        targetValueByState = { isDarkTheme ->
+            targetValueByState(resolveColorScheme(isDarkTheme = isDarkTheme))
         },
     )
 

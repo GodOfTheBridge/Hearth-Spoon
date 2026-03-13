@@ -39,5 +39,5 @@ class ProfileViewModel @Inject constructor(
 
 data class ProfileUiState(
     val title: String = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
-    val themeMode: ThemeMode = ThemeMode.Light,
+    val themeMode: ThemeMode = ThemeMode.System,
 )

@@ -7,5 +7,6 @@ android { namespace = "com.gotb.heartandspoon.core.designsystem" }
 
 dependencies {
     implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.foundation:foundation")
     implementation(project(":core:model"))
 }
