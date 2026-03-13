@@ -6,6 +6,7 @@ import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.domain.api.ThemeSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -16,15 +17,17 @@ import kotlinx.coroutines.launch
 class ProfileViewModel @Inject constructor(
     private val themeSettingsRepository: ThemeSettingsRepository,
 ) : ViewModel() {
+    private val errorMessageState = MutableStateFlow<String?>(null)
+
     val state: StateFlow<ProfileUiState> =
         combine(
-            themeSettingsRepository.savedThemeMode,
             themeSettingsRepository.themeMode,
-        ) { themeMode, activeThemeMode ->
+            errorMessageState,
+        ) { themeMode, errorMessage ->
                 ProfileUiState(
                     title = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
                     themeMode = themeMode,
-                    activeThemeMode = activeThemeMode,
+                    errorMessage = errorMessage,
                 )
             }
             .stateIn(
@@ -33,21 +36,24 @@ class ProfileViewModel @Inject constructor(
                 initialValue = ProfileUiState(),
             )
 
-    fun previewThemeMode(themeMode: ThemeMode?) {
+    fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
-            themeSettingsRepository.previewThemeMode(themeMode)
+            errorMessageState.value = null
+            runCatching {
+                themeSettingsRepository.setThemeMode(themeMode)
+            }.onFailure { throwable ->
+                errorMessageState.value = throwable.message ?: "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0442\u0435\u043c\u0443"
+            }
         }
     }
 
-    fun setThemeMode(themeMode: ThemeMode) {
-        viewModelScope.launch {
-            themeSettingsRepository.setThemeMode(themeMode)
-        }
+    fun clearErrorMessage() {
+        errorMessageState.value = null
     }
 }
 
 data class ProfileUiState(
     val title: String = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
-    val themeMode: ThemeMode? = null,
-    val activeThemeMode: ThemeMode? = null,
+    val themeMode: ThemeMode = ThemeMode.System,
+    val errorMessage: String? = null,
 )

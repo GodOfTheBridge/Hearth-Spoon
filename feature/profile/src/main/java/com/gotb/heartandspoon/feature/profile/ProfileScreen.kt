@@ -11,10 +11,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -24,18 +29,32 @@ import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.core.model.isEffectivelyDark
 
 @Composable
-fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileRoute(
+    previewThemeMode: ThemeMode?,
+    onThemeModePreviewed: (ThemeMode?) -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    DisposableEffect(viewModel) {
+    DisposableEffect(Unit) {
         onDispose {
-            viewModel.previewThemeMode(themeMode = null)
+            onThemeModePreviewed(null)
         }
+    }
+
+    LaunchedEffect(state.errorMessage) {
+        val errorMessage = state.errorMessage ?: return@LaunchedEffect
+        onThemeModePreviewed(null)
+        snackbarHostState.showSnackbar(errorMessage)
+        viewModel.clearErrorMessage()
     }
 
     ProfileScreen(
         state = state,
-        onThemeModePreviewed = viewModel::previewThemeMode,
+        previewThemeMode = previewThemeMode,
+        snackbarHostState = snackbarHostState,
+        onThemeModePreviewed = onThemeModePreviewed,
         onThemeModeChanged = viewModel::setThemeMode,
     )
 }
@@ -43,15 +62,18 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
 @Composable
 private fun ProfileScreen(
     state: ProfileUiState,
+    previewThemeMode: ThemeMode?,
+    snackbarHostState: SnackbarHostState,
     onThemeModePreviewed: (ThemeMode?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
 ) {
     val systemIsDarkTheme = isSystemInDarkTheme()
-    val activeThemeMode = state.activeThemeMode ?: state.themeMode ?: ThemeMode.System
+    val activeThemeMode = previewThemeMode ?: state.themeMode
     val effectiveIsDarkTheme = activeThemeMode.isEffectivelyDark(systemIsDarkTheme = systemIsDarkTheme)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { contentPadding ->
         ProfileContent(
             state = state,
@@ -109,10 +131,10 @@ private fun ProfileContent(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                state.themeMode?.let { selectedThemeMode ->
+                key(state.themeMode, state.errorMessage != null) {
                     ThemeModeSelector(
                         modifier = Modifier.fillMaxWidth(),
-                        selectedThemeMode = selectedThemeMode,
+                        selectedThemeMode = state.themeMode,
                         effectiveIsDarkTheme = effectiveIsDarkTheme,
                         onThemeModePreviewed = onThemeModePreviewed,
                         onThemeModeSelected = onThemeModeChanged,

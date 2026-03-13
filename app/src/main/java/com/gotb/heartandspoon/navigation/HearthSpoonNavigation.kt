@@ -7,6 +7,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -17,13 +18,19 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.feature.home.HomeRoute
 import com.gotb.heartandspoon.feature.homedetails.HomeDetailsRoute
 import com.gotb.heartandspoon.feature.profile.ProfileRoute
 
 @Composable
-fun HearthSpoonAppNavigation() {
+fun HearthSpoonAppNavigation(
+    previewThemeMode: ThemeMode?,
+    onThemeModePreviewed: (ThemeMode?) -> Unit,
+) {
     val backStack = rememberNavBackStack(Home)
+    val currentPreviewThemeMode = rememberUpdatedState(previewThemeMode)
+    val currentOnThemeModePreviewed = rememberUpdatedState(onThemeModePreviewed)
     val entryProvider =
         remember(backStack) {
             entryProvider<NavKey> {
@@ -34,7 +41,10 @@ fun HearthSpoonAppNavigation() {
                     HomeDetailsRoute(onBack = { backStack.removeLastOrNull() })
                 }
                 entry<Profile> {
-                    ProfileRoute()
+                    ProfileRoute(
+                        previewThemeMode = currentPreviewThemeMode.value,
+                        onThemeModePreviewed = currentOnThemeModePreviewed.value,
+                    )
                 }
             }
         }
