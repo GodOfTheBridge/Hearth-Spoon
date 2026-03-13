@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            val initialThemeMode = themeSettingsRepository.themeMode.first()
+            val initialThemeMode = themeSettingsRepository.savedThemeMode.first()
 
             setContent {
                 val themeMode by themeSettingsRepository.themeMode.collectAsState(initial = initialThemeMode)

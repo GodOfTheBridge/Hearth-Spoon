@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,8 +27,15 @@ import com.gotb.heartandspoon.core.model.isEffectivelyDark
 fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    DisposableEffect(viewModel) {
+        onDispose {
+            viewModel.previewThemeMode(themeMode = null)
+        }
+    }
+
     ProfileScreen(
         state = state,
+        onThemeModePreviewed = viewModel::previewThemeMode,
         onThemeModeChanged = viewModel::setThemeMode,
     )
 }
@@ -35,10 +43,12 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
 @Composable
 private fun ProfileScreen(
     state: ProfileUiState,
+    onThemeModePreviewed: (ThemeMode?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
 ) {
     val systemIsDarkTheme = isSystemInDarkTheme()
-    val effectiveIsDarkTheme = state.themeMode.isEffectivelyDark(systemIsDarkTheme = systemIsDarkTheme)
+    val activeThemeMode = state.activeThemeMode ?: state.themeMode ?: ThemeMode.System
+    val effectiveIsDarkTheme = activeThemeMode.isEffectivelyDark(systemIsDarkTheme = systemIsDarkTheme)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -47,6 +57,7 @@ private fun ProfileScreen(
             state = state,
             contentPadding = contentPadding,
             effectiveIsDarkTheme = effectiveIsDarkTheme,
+            onThemeModePreviewed = onThemeModePreviewed,
             onThemeModeChanged = onThemeModeChanged,
         )
     }
@@ -57,6 +68,7 @@ private fun ProfileContent(
     state: ProfileUiState,
     contentPadding: PaddingValues,
     effectiveIsDarkTheme: Boolean,
+    onThemeModePreviewed: (ThemeMode?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
 ) {
     Column(
@@ -97,12 +109,15 @@ private fun ProfileContent(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                ThemeModeSelector(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedThemeMode = state.themeMode,
-                    effectiveIsDarkTheme = effectiveIsDarkTheme,
-                    onThemeModeSelected = onThemeModeChanged,
-                )
+                state.themeMode?.let { selectedThemeMode ->
+                    ThemeModeSelector(
+                        modifier = Modifier.fillMaxWidth(),
+                        selectedThemeMode = selectedThemeMode,
+                        effectiveIsDarkTheme = effectiveIsDarkTheme,
+                        onThemeModePreviewed = onThemeModePreviewed,
+                        onThemeModeSelected = onThemeModeChanged,
+                    )
+                }
             }
         }
     }

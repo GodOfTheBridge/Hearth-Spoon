@@ -11,6 +11,8 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.gestures.snapTo
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -30,9 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -57,15 +58,17 @@ import kotlin.math.roundToInt
 fun ThemeModeSelector(
     selectedThemeMode: ThemeMode,
     effectiveIsDarkTheme: Boolean,
+    onThemeModePreviewed: (ThemeMode?) -> Unit,
     onThemeModeSelected: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    val currentSelectedThemeMode by rememberUpdatedState(selectedThemeMode)
-    val currentOnThemeModeSelected by rememberUpdatedState(onThemeModeSelected)
     val density = LocalDensity.current
+    val currentSelectedThemeMode by rememberUpdatedState(selectedThemeMode)
+    val currentOnThemeModePreviewed by rememberUpdatedState(onThemeModePreviewed)
+    val currentOnThemeModeSelected by rememberUpdatedState(onThemeModeSelected)
     val selectorState = remember { AnchoredDraggableState(initialValue = selectedThemeMode) }
-    var immediateSelectionTarget by remember { mutableStateOf<ThemeMode?>(null) }
+    var lastPreviewedThemeMode by remember { mutableStateOf<ThemeMode?>(null) }
     val flingBehavior =
         AnchoredDraggableDefaults.flingBehavior(
             state = selectorState,
@@ -91,30 +94,50 @@ fun ThemeModeSelector(
 
         LaunchedEffect(anchors, segmentWidthPx, selectedThemeMode) {
             selectorState.updateAnchors(anchors, selectedThemeMode)
-            if (immediateSelectionTarget == selectedThemeMode) {
-                immediateSelectionTarget = null
-            }
             if (
                 segmentWidthPx > 0f &&
                 selectorState.settledValue != selectedThemeMode &&
                 selectorState.targetValue != selectedThemeMode
             ) {
-                selectorState.animateTo(selectedThemeMode, hsStandardMotionSpec())
+                selectorState.snapTo(selectedThemeMode)
             }
+        }
+
+        LaunchedEffect(selectorState) {
+            snapshotFlow { selectorState.targetValue }
+                .drop(1)
+                .collect { targetThemeMode ->
+                    if (targetThemeMode == currentSelectedThemeMode) {
+                        if (lastPreviewedThemeMode != null) {
+                            lastPreviewedThemeMode = null
+                            currentOnThemeModePreviewed(null)
+                        }
+                        return@collect
+                    }
+
+                    if (lastPreviewedThemeMode == targetThemeMode) {
+                        return@collect
+                    }
+
+                    lastPreviewedThemeMode = targetThemeMode
+                    currentOnThemeModePreviewed(targetThemeMode)
+                }
         }
 
         LaunchedEffect(selectorState) {
             snapshotFlow { selectorState.settledValue }
                 .drop(1)
                 .collect { settledThemeMode ->
-                    if (immediateSelectionTarget == settledThemeMode) {
-                        immediateSelectionTarget = null
+                    if (settledThemeMode == currentSelectedThemeMode) {
+                        if (lastPreviewedThemeMode != null) {
+                            lastPreviewedThemeMode = null
+                            currentOnThemeModePreviewed(null)
+                        }
                         return@collect
                     }
 
-                    if (settledThemeMode != currentSelectedThemeMode) {
-                        currentOnThemeModeSelected(settledThemeMode)
-                    }
+                    lastPreviewedThemeMode = null
+                    currentOnThemeModeSelected(settledThemeMode)
                 }
         }
 
@@ -123,6 +146,11 @@ fun ThemeModeSelector(
                 .takeIf { !it.isNaN() }
                 ?: (selectedThemeMode.selectorIndex() * segmentWidthPx)
         val indicatorWidth = with(density) { segmentWidthPx.toDp() }
+        val visualSelectedThemeMode =
+            selectorState.offset
+                .takeIf { !it.isNaN() }
+                ?.let { selectorState.targetValue }
+                ?: selectedThemeMode
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -196,14 +224,16 @@ fun ThemeModeSelector(
                                     .weight(1f)
                                     .fillMaxHeight(),
                             themeMode = themeMode,
-                            selected = selectedThemeMode == themeMode,
+                            selected = visualSelectedThemeMode == themeMode,
                             onClick = {
                                 if (themeMode == selectorState.targetValue || segmentWidthPx <= 0f) {
                                     return@ThemeModeSelectorSegment
                                 }
 
-                                immediateSelectionTarget = themeMode
-                                currentOnThemeModeSelected(themeMode)
+                                if (themeMode != currentSelectedThemeMode) {
+                                    lastPreviewedThemeMode = themeMode
+                                    currentOnThemeModePreviewed(themeMode)
+                                }
                                 scope.launch {
                                     selectorState.animateTo(themeMode, hsStandardMotionSpec())
                                 }
@@ -216,7 +246,7 @@ fun ThemeModeSelector(
             Crossfade(
                 targetState =
                     themeModeSummaryText(
-                        selectedThemeMode = selectedThemeMode,
+                        selectedThemeMode = visualSelectedThemeMode,
                         effectiveIsDarkTheme = effectiveIsDarkTheme,
                     ),
                 animationSpec = hsStandardMotionSpec(),

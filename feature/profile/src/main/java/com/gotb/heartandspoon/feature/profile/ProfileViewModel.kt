@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -17,11 +17,14 @@ class ProfileViewModel @Inject constructor(
     private val themeSettingsRepository: ThemeSettingsRepository,
 ) : ViewModel() {
     val state: StateFlow<ProfileUiState> =
-        themeSettingsRepository.themeMode
-            .map { themeMode ->
+        combine(
+            themeSettingsRepository.savedThemeMode,
+            themeSettingsRepository.themeMode,
+        ) { themeMode, activeThemeMode ->
                 ProfileUiState(
                     title = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
                     themeMode = themeMode,
+                    activeThemeMode = activeThemeMode,
                 )
             }
             .stateIn(
@@ -29,6 +32,12 @@ class ProfileViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
                 initialValue = ProfileUiState(),
             )
+
+    fun previewThemeMode(themeMode: ThemeMode?) {
+        viewModelScope.launch {
+            themeSettingsRepository.previewThemeMode(themeMode)
+        }
+    }
 
     fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
@@ -39,5 +48,6 @@ class ProfileViewModel @Inject constructor(
 
 data class ProfileUiState(
     val title: String = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
-    val themeMode: ThemeMode = ThemeMode.System,
+    val themeMode: ThemeMode? = null,
+    val activeThemeMode: ThemeMode? = null,
 )
