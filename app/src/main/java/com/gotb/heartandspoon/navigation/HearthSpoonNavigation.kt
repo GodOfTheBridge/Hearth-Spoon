@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.feature.home.HomeRoute
 import com.gotb.heartandspoon.feature.homedetails.HomeDetailsRoute
@@ -27,10 +28,12 @@ import com.gotb.heartandspoon.feature.profile.ProfileRoute
 fun HearthSpoonAppNavigation(
     previewThemeMode: ThemeMode?,
     onThemeModePreviewed: (ThemeMode?) -> Unit,
+    onThemeFamilyPreviewed: (ThemeFamily?) -> Unit,
 ) {
     val backStack = rememberNavBackStack(Home)
     val currentPreviewThemeMode = rememberUpdatedState(previewThemeMode)
     val currentOnThemeModePreviewed = rememberUpdatedState(onThemeModePreviewed)
+    val currentOnThemeFamilyPreviewed = rememberUpdatedState(onThemeFamilyPreviewed)
     val entryProvider =
         remember(backStack) {
             entryProvider<NavKey> {
@@ -44,6 +47,7 @@ fun HearthSpoonAppNavigation(
                     ProfileRoute(
                         previewThemeMode = currentPreviewThemeMode.value,
                         onThemeModePreviewed = currentOnThemeModePreviewed.value,
+                        onThemeFamilyPreviewed = currentOnThemeFamilyPreviewed.value,
                     )
                 }
             }

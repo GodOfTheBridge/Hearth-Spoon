@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
 import java.io.IOException
 import javax.inject.Inject
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.map
 class ThemePreferencesDataSource @Inject constructor(
     private val themeSettingsPreferencesDataStore: DataStore<Preferences>,
 ) {
-    val themeMode: Flow<ThemeMode> =
+    private val preferencesFlow: Flow<Preferences> =
         themeSettingsPreferencesDataStore.data
             .catch { throwable ->
                 if (throwable is IOException) {
@@ -26,8 +27,17 @@ class ThemePreferencesDataSource @Inject constructor(
                     throw throwable
                 }
             }
+
+    val themeMode: Flow<ThemeMode> =
+        preferencesFlow
             .map { preferences ->
                 ThemeMode.fromStorageValue(preferences[themeModePreferenceKey])
+            }
+
+    val themeFamily: Flow<ThemeFamily> =
+        preferencesFlow
+            .map { preferences ->
+                ThemeFamily.fromStorageValue(preferences[themeFamilyPreferenceKey])
             }
 
     suspend fun setThemeMode(themeMode: ThemeMode) {
@@ -36,7 +46,14 @@ class ThemePreferencesDataSource @Inject constructor(
         }
     }
 
+    suspend fun setThemeFamily(themeFamily: ThemeFamily) {
+        themeSettingsPreferencesDataStore.edit { preferences ->
+            preferences[themeFamilyPreferenceKey] = themeFamily.storageValue
+        }
+    }
+
     private companion object {
         val themeModePreferenceKey = stringPreferencesKey(name = "theme_mode")
+        val themeFamilyPreferenceKey = stringPreferencesKey(name = "theme_family")
     }
 }

@@ -20,30 +20,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import com.gotb.heartandspoon.core.model.ThemeFamily
 
 @Composable
 fun HearthSpoonTheme(
+    themeFamily: ThemeFamily,
     isDarkTheme: Boolean,
     content: @Composable () -> Unit,
 ) {
-    val animatedColorScheme = rememberAnimatedColorScheme(isDarkTheme = isDarkTheme)
-    val contentAlpha = rememberThemeContentAlpha(isDarkTheme = isDarkTheme)
+    val themeAppearance = remember(themeFamily, isDarkTheme) { ThemeAppearance(themeFamily, isDarkTheme) }
+    val animatedColorScheme = rememberAnimatedColorScheme(themeAppearance = themeAppearance)
+    val contentAlpha = rememberThemeContentAlpha(themeAppearance = themeAppearance)
 
     MaterialTheme(
         colorScheme = animatedColorScheme,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Crossfade(
-                targetState = isDarkTheme,
+                targetState = themeAppearance,
                 modifier = Modifier.fillMaxSize(),
                 animationSpec = hsStandardMotionSpec(),
                 label = "themeBackdrop",
-            ) { currentIsDarkTheme ->
+            ) { currentThemeAppearance ->
                 Box(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(resolveColorScheme(isDarkTheme = currentIsDarkTheme).background),
+                            .background(resolveColorScheme(themeAppearance = currentThemeAppearance).background),
                 )
             }
 
@@ -59,18 +62,29 @@ fun HearthSpoonTheme(
     }
 }
 
-private fun resolveColorScheme(isDarkTheme: Boolean) =
-    when (isDarkTheme) {
-        true -> hearthSpoonDarkColorScheme
-        false -> hearthSpoonLightColorScheme
+private fun resolveColorScheme(themeAppearance: ThemeAppearance) =
+    when (themeAppearance.themeFamily) {
+        ThemeFamily.Khokhloma ->
+            if (themeAppearance.isDarkTheme) {
+                khokhlomaDarkColorScheme
+            } else {
+                khokhlomaLightColorScheme
+            }
+
+        ThemeFamily.Gzhel ->
+            if (themeAppearance.isDarkTheme) {
+                gzhelDarkColorScheme
+            } else {
+                gzhelLightColorScheme
+            }
     }
 
 @Composable
-private fun rememberAnimatedColorScheme(isDarkTheme: Boolean): ColorScheme {
-    val targetColorScheme = resolveColorScheme(isDarkTheme = isDarkTheme)
+private fun rememberAnimatedColorScheme(themeAppearance: ThemeAppearance): ColorScheme {
+    val targetColorScheme = resolveColorScheme(themeAppearance = themeAppearance)
     val transition =
         updateTransition(
-            targetState = isDarkTheme,
+            targetState = themeAppearance,
             label = "themeColorSchemeTransition",
         )
 
@@ -176,14 +190,14 @@ private fun rememberAnimatedColorScheme(isDarkTheme: Boolean): ColorScheme {
 }
 
 @Composable
-private fun rememberThemeContentAlpha(isDarkTheme: Boolean): Float {
+private fun rememberThemeContentAlpha(themeAppearance: ThemeAppearance): Float {
     val contentAlpha = remember { Animatable(1f) }
-    var previousThemeMode by remember { mutableStateOf(isDarkTheme) }
+    var previousThemeAppearance by remember { mutableStateOf(themeAppearance) }
 
-    LaunchedEffect(isDarkTheme) {
-        if (previousThemeMode == isDarkTheme) return@LaunchedEffect
+    LaunchedEffect(themeAppearance) {
+        if (previousThemeAppearance == themeAppearance) return@LaunchedEffect
 
-        previousThemeMode = isDarkTheme
+        previousThemeAppearance = themeAppearance
         contentAlpha.snapTo(themeContentMinAlpha)
         contentAlpha.animateTo(
             targetValue = 1f,
@@ -195,16 +209,21 @@ private fun rememberThemeContentAlpha(isDarkTheme: Boolean): Float {
 }
 
 @Composable
-private fun Transition<Boolean>.animateThemeColor(
+private fun Transition<ThemeAppearance>.animateThemeColor(
     label: String,
     targetValueByState: @Composable (ColorScheme) -> Color,
 ): State<Color> =
     animateColor(
         transitionSpec = { hsStandardMotionSpec() },
         label = label,
-        targetValueByState = { isDarkTheme ->
-            targetValueByState(resolveColorScheme(isDarkTheme = isDarkTheme))
+        targetValueByState = { currentThemeAppearance ->
+            targetValueByState(resolveColorScheme(themeAppearance = currentThemeAppearance))
         },
     )
+
+private data class ThemeAppearance(
+    val themeFamily: ThemeFamily,
+    val isDarkTheme: Boolean,
+)
 
 private const val themeContentMinAlpha = 0.97f

@@ -14,18 +14,44 @@ fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val systemIsDarkTheme = isSystemInDarkTheme()
 
-    LaunchedEffect(state.savedThemeMode, state.previewThemeMode) {
-        if (state.previewThemeMode != null && state.previewThemeMode == state.savedThemeMode) {
-            viewModel.previewThemeMode(themeMode = null)
-        }
+    if (!state.isReady) {
+        return
     }
+
+    ClearCommittedPreviewEffect(
+        savedValue = state.savedThemeMode,
+        previewValue = state.previewThemeMode,
+        clearPreview = viewModel::previewThemeMode,
+    )
+    ClearCommittedPreviewEffect(
+        savedValue = state.savedThemeFamily,
+        previewValue = state.previewThemeFamily,
+        clearPreview = viewModel::previewThemeFamily,
+    )
 
     val effectiveIsDarkTheme = state.activeThemeMode.isEffectivelyDark(systemIsDarkTheme = systemIsDarkTheme)
 
-    HearthSpoonTheme(isDarkTheme = effectiveIsDarkTheme) {
+    HearthSpoonTheme(
+        themeFamily = state.activeThemeFamily,
+        isDarkTheme = effectiveIsDarkTheme,
+    ) {
         HearthSpoonAppNavigation(
             previewThemeMode = state.previewThemeMode,
             onThemeModePreviewed = viewModel::previewThemeMode,
+            onThemeFamilyPreviewed = viewModel::previewThemeFamily,
         )
+    }
+}
+
+@Composable
+private fun <T> ClearCommittedPreviewEffect(
+    savedValue: T?,
+    previewValue: T?,
+    clearPreview: (T?) -> Unit,
+) {
+    LaunchedEffect(savedValue, previewValue) {
+        if (previewValue != null && previewValue == savedValue) {
+            clearPreview(null)
+        }
     }
 }
