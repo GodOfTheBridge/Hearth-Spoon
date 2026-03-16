@@ -30,23 +30,31 @@ fun HearthSpoonTheme(
 ) {
     val themeAppearance = remember(themeFamily, isDarkTheme) { ThemeAppearance(themeFamily, isDarkTheme) }
     val animatedColorScheme = rememberAnimatedColorScheme(themeAppearance = themeAppearance)
-    val contentAlpha = rememberThemeContentAlpha(themeAppearance = themeAppearance)
+    val contentAlpha = rememberThemeContentAlpha(isDarkTheme = isDarkTheme)
 
     MaterialTheme(
         colorScheme = animatedColorScheme,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Crossfade(
-                targetState = themeAppearance,
+                targetState = isDarkTheme,
                 modifier = Modifier.fillMaxSize(),
                 animationSpec = hsStandardMotionSpec(),
                 label = "themeBackdrop",
-            ) { currentThemeAppearance ->
+            ) { currentIsDarkTheme ->
                 Box(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(resolveColorScheme(themeAppearance = currentThemeAppearance).background),
+                            .background(
+                                resolveColorScheme(
+                                    themeAppearance =
+                                        ThemeAppearance(
+                                            themeFamily = themeFamily,
+                                            isDarkTheme = currentIsDarkTheme,
+                                        ),
+                                ).background,
+                            ),
                 )
             }
 
@@ -190,14 +198,14 @@ private fun rememberAnimatedColorScheme(themeAppearance: ThemeAppearance): Color
 }
 
 @Composable
-private fun rememberThemeContentAlpha(themeAppearance: ThemeAppearance): Float {
+private fun rememberThemeContentAlpha(isDarkTheme: Boolean): Float {
     val contentAlpha = remember { Animatable(1f) }
-    var previousThemeAppearance by remember { mutableStateOf(themeAppearance) }
+    var previousIsDarkTheme by remember { mutableStateOf(isDarkTheme) }
 
-    LaunchedEffect(themeAppearance) {
-        if (previousThemeAppearance == themeAppearance) return@LaunchedEffect
+    LaunchedEffect(isDarkTheme) {
+        if (previousIsDarkTheme == isDarkTheme) return@LaunchedEffect
 
-        previousThemeAppearance = themeAppearance
+        previousIsDarkTheme = isDarkTheme
         contentAlpha.snapTo(themeContentMinAlpha)
         contentAlpha.animateTo(
             targetValue = 1f,
