@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.gotb.heartandspoon.domain.api.LanguageSettingsRepository
 import com.gotb.heartandspoon.domain.api.ThemeSettingsRepository
 import dagger.Binds
 import dagger.Module
@@ -38,4 +39,10 @@ abstract class ThemeSettingsDataModule {
     abstract fun bindThemeSettingsRepository(
         themeSettingsRepositoryImpl: ThemeSettingsRepositoryImpl,
     ): ThemeSettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLanguageSettingsRepository(
+        languageSettingsRepositoryImpl: LanguageSettingsRepositoryImpl,
+    ): LanguageSettingsRepository
 }

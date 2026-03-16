@@ -20,11 +20,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gotb.heartandspoon.core.designsystem.AppLanguageSelector
 import com.gotb.heartandspoon.core.designsystem.ThemeFamilySelector
 import com.gotb.heartandspoon.core.designsystem.ThemeModeSelector
+import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.core.model.isEffectivelyDark
@@ -38,6 +42,7 @@ fun ProfileRoute(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     DisposableEffect(Unit) {
         onDispose {
@@ -46,11 +51,11 @@ fun ProfileRoute(
         }
     }
 
-    LaunchedEffect(state.errorMessage) {
-        val errorMessage = state.errorMessage ?: return@LaunchedEffect
+    LaunchedEffect(state.errorMessageRes) {
+        val errorMessageRes = state.errorMessageRes ?: return@LaunchedEffect
         onThemeModePreviewed(null)
         onThemeFamilyPreviewed(null)
-        snackbarHostState.showSnackbar(errorMessage)
+        snackbarHostState.showSnackbar(context.getString(errorMessageRes))
         viewModel.clearErrorMessage()
     }
 
@@ -62,6 +67,7 @@ fun ProfileRoute(
         onThemeFamilyPreviewed = onThemeFamilyPreviewed,
         onThemeModeChanged = viewModel::setThemeMode,
         onThemeFamilyChanged = viewModel::setThemeFamily,
+        onAppLanguageChanged = viewModel::setAppLanguage,
     )
 }
 
@@ -74,6 +80,7 @@ private fun ProfileScreen(
     onThemeFamilyPreviewed: (ThemeFamily?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
     onThemeFamilyChanged: (ThemeFamily) -> Unit,
+    onAppLanguageChanged: (AppLanguage) -> Unit,
 ) {
     val systemIsDarkTheme = isSystemInDarkTheme()
     val activeThemeMode = previewThemeMode ?: state.themeMode
@@ -91,6 +98,7 @@ private fun ProfileScreen(
             onThemeFamilyPreviewed = onThemeFamilyPreviewed,
             onThemeModeChanged = onThemeModeChanged,
             onThemeFamilyChanged = onThemeFamilyChanged,
+            onAppLanguageChanged = onAppLanguageChanged,
         )
     }
 }
@@ -104,23 +112,25 @@ private fun ProfileContent(
     onThemeFamilyPreviewed: (ThemeFamily?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
     onThemeFamilyChanged: (ThemeFamily) -> Unit,
+    onAppLanguageChanged: (AppLanguage) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding)
-            .padding(horizontal = 20.dp, vertical = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Text(
-            text = state.title,
+            text = stringResource(R.string.profile_title),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
         )
 
         ProfileSettingSection(
-            title = "\u0422\u0435\u043c\u0430 \u043e\u0444\u043e\u0440\u043c\u043b\u0435\u043d\u0438\u044f",
-            description = "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435, \u043a\u0430\u043a \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0434\u043e\u043b\u0436\u043d\u043e \u0432\u0435\u0441\u0442\u0438 \u0441\u0435\u0431\u044f \u0432 \u0441\u0432\u0435\u0442\u043b\u043e\u043c \u0438 \u0442\u0451\u043c\u043d\u043e\u043c \u043e\u043a\u0440\u0443\u0436\u0435\u043d\u0438\u0438.",
+            title = stringResource(R.string.profile_theme_title),
+            description = stringResource(R.string.profile_theme_description),
         ) {
             ThemeModeSelector(
                 modifier = Modifier.fillMaxWidth(),
@@ -132,14 +142,25 @@ private fun ProfileContent(
         }
 
         ProfileSettingSection(
-            title = "\u0421\u0442\u0438\u043b\u044c \u043e\u0444\u043e\u0440\u043c\u043b\u0435\u043d\u0438\u044f",
-            description = "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0445\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0441\u0442\u0438\u043b\u044c \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f.",
+            title = stringResource(R.string.profile_theme_family_title),
+            description = stringResource(R.string.profile_theme_family_description),
         ) {
             ThemeFamilySelector(
                 modifier = Modifier.fillMaxWidth(),
                 selectedThemeFamily = state.themeFamily,
                 onThemeFamilyPreviewed = onThemeFamilyPreviewed,
                 onThemeFamilySelected = onThemeFamilyChanged,
+            )
+        }
+
+        ProfileSettingSection(
+            title = stringResource(R.string.profile_language_title),
+            description = stringResource(R.string.profile_language_description),
+        ) {
+            AppLanguageSelector(
+                modifier = Modifier.fillMaxWidth(),
+                selectedAppLanguage = state.appLanguage,
+                onAppLanguageSelected = onAppLanguageChanged,
             )
         }
     }

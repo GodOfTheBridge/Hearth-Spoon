@@ -1,9 +1,12 @@
 package com.gotb.heartandspoon.feature.profile
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
+import com.gotb.heartandspoon.domain.api.LanguageSettingsRepository
 import com.gotb.heartandspoon.domain.api.ThemeSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,20 +20,22 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val themeSettingsRepository: ThemeSettingsRepository,
+    private val languageSettingsRepository: LanguageSettingsRepository,
 ) : ViewModel() {
-    private val errorMessageState = MutableStateFlow<String?>(null)
+    private val errorMessageResState = MutableStateFlow<Int?>(null)
 
     val state: StateFlow<ProfileUiState> =
         combine(
             themeSettingsRepository.themeMode,
             themeSettingsRepository.themeFamily,
-            errorMessageState,
-        ) { themeMode, themeFamily, errorMessage ->
+            languageSettingsRepository.appLanguage,
+            errorMessageResState,
+        ) { themeMode, themeFamily, appLanguage, errorMessageRes ->
                 ProfileUiState(
-                    title = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
                     themeMode = themeMode,
                     themeFamily = themeFamily,
-                    errorMessage = errorMessage,
+                    appLanguage = appLanguage,
+                    errorMessageRes = errorMessageRes,
                 )
             }
             .stateIn(
@@ -41,34 +46,45 @@ class ProfileViewModel @Inject constructor(
 
     fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
-            errorMessageState.value = null
+            errorMessageResState.value = null
             runCatching {
                 themeSettingsRepository.setThemeMode(themeMode)
-            }.onFailure { throwable ->
-                errorMessageState.value = throwable.message ?: "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0442\u0435\u043c\u0443"
+            }.onFailure {
+                errorMessageResState.value = R.string.profile_error_save_theme
             }
         }
     }
 
     fun setThemeFamily(themeFamily: ThemeFamily) {
         viewModelScope.launch {
-            errorMessageState.value = null
+            errorMessageResState.value = null
             runCatching {
                 themeSettingsRepository.setThemeFamily(themeFamily)
-            }.onFailure { throwable ->
-                errorMessageState.value = throwable.message ?: "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0441\u0442\u0438\u043b\u044c \u043e\u0444\u043e\u0440\u043c\u043b\u0435\u043d\u0438\u044f"
+            }.onFailure {
+                errorMessageResState.value = R.string.profile_error_save_theme_family
+            }
+        }
+    }
+
+    fun setAppLanguage(appLanguage: AppLanguage) {
+        viewModelScope.launch {
+            errorMessageResState.value = null
+            runCatching {
+                languageSettingsRepository.setAppLanguage(appLanguage)
+            }.onFailure {
+                errorMessageResState.value = R.string.profile_error_save_language
             }
         }
     }
 
     fun clearErrorMessage() {
-        errorMessageState.value = null
+        errorMessageResState.value = null
     }
 }
 
 data class ProfileUiState(
-    val title: String = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
     val themeMode: ThemeMode = ThemeMode.System,
     val themeFamily: ThemeFamily = ThemeFamily.Khokhloma,
-    val errorMessage: String? = null,
+    val appLanguage: AppLanguage = AppLanguage.System,
+    @get:StringRes val errorMessageRes: Int? = null,
 )

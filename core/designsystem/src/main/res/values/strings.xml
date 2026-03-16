@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_system">System</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="theme_mode_summary_light">Light theme selected</string>
+    <string name="theme_mode_summary_system_dark">Currently: dark</string>
+    <string name="theme_mode_summary_system_light">Currently: light</string>
+    <string name="theme_mode_summary_dark">Dark theme selected</string>
+
+    <string name="theme_family_khokhloma">Khokhloma</string>
+    <string name="theme_family_gzhel">Gzhel</string>
+    <string name="theme_family_summary_selected">Selected style: %1$s</string>
+
+    <string name="app_language_system">System</string>
+    <string name="app_language_english">English</string>
+    <string name="app_language_russian">Russian</string>
+    <string name="app_language_summary_system">Use the device language</string>
+    <string name="app_language_summary_english">App interface in English</string>
+    <string name="app_language_summary_russian">App interface in Russian</string>
+</resources>

@@ -1,7 +1,9 @@
 package com.gotb.heartandspoon.core.designsystem
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.gotb.heartandspoon.core.model.ThemeFamily
 
 @Composable
@@ -11,32 +13,36 @@ fun ThemeFamilySelector(
     modifier: Modifier = Modifier,
     onThemeFamilyPreviewed: (ThemeFamily?) -> Unit = {},
 ) {
+    val context = LocalContext.current
+
     HSSegmentedSelector(
         modifier = modifier,
-        options = themeFamilySelectorOptions,
+        options =
+            listOf(
+                HSSegmentedSelectorOption(
+                    value = ThemeFamily.Khokhloma,
+                    title = context.getString(themeFamilyTitleRes(ThemeFamily.Khokhloma)),
+                ),
+                HSSegmentedSelectorOption(
+                    value = ThemeFamily.Gzhel,
+                    title = context.getString(themeFamilyTitleRes(ThemeFamily.Gzhel)),
+                ),
+            ),
         selectedOption = selectedThemeFamily,
         onOptionPreviewed = onThemeFamilyPreviewed,
         onOptionSelected = onThemeFamilySelected,
         supportingText = { themeFamily ->
-            "\u0412\u044b\u0431\u0440\u0430\u043d \u0441\u0442\u0438\u043b\u044c: ${themeFamily.selectorTitle()}"
+            context.getString(
+                R.string.theme_family_summary_selected,
+                context.getString(themeFamilyTitleRes(themeFamily)),
+            )
         },
     )
 }
 
-private fun ThemeFamily.selectorTitle(): String =
-    when (this) {
-        ThemeFamily.Khokhloma -> "\u0425\u043e\u0445\u043b\u043e\u043c\u0430"
-        ThemeFamily.Gzhel -> "\u0413\u0436\u0435\u043b\u044c"
+@StringRes
+private fun themeFamilyTitleRes(themeFamily: ThemeFamily): Int =
+    when (themeFamily) {
+        ThemeFamily.Khokhloma -> R.string.theme_family_khokhloma
+        ThemeFamily.Gzhel -> R.string.theme_family_gzhel
     }
-
-private val themeFamilySelectorOptions =
-    listOf(
-        HSSegmentedSelectorOption(
-            value = ThemeFamily.Khokhloma,
-            title = "\u0425\u043e\u0445\u043b\u043e\u043c\u0430",
-        ),
-        HSSegmentedSelectorOption(
-            value = ThemeFamily.Gzhel,
-            title = "\u0413\u0436\u0435\u043b\u044c",
-        ),
-    )

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
 import java.io.IOException
@@ -40,6 +41,12 @@ class ThemePreferencesDataSource @Inject constructor(
                 ThemeFamily.fromStorageValue(preferences[themeFamilyPreferenceKey])
             }
 
+    val appLanguage: Flow<AppLanguage> =
+        preferencesFlow
+            .map { preferences ->
+                AppLanguage.fromStorageValue(preferences[appLanguagePreferenceKey])
+            }
+
     suspend fun setThemeMode(themeMode: ThemeMode) {
         themeSettingsPreferencesDataStore.edit { preferences ->
             preferences[themeModePreferenceKey] = themeMode.storageValue
@@ -52,8 +59,15 @@ class ThemePreferencesDataSource @Inject constructor(
         }
     }
 
+    suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        themeSettingsPreferencesDataStore.edit { preferences ->
+            preferences[appLanguagePreferenceKey] = appLanguage.storageValue
+        }
+    }
+
     private companion object {
         val themeModePreferenceKey = stringPreferencesKey(name = "theme_mode")
         val themeFamilyPreferenceKey = stringPreferencesKey(name = "theme_family")
+        val appLanguagePreferenceKey = stringPreferencesKey(name = "app_language")
     }
 }

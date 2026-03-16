@@ -1,5 +1,6 @@
 package com.gotb.heartandspoon.feature.home
 
+import androidx.annotation.StringRes
 import com.gotb.heartandspoon.core.model.HomeItem
 
 data class HomeState(
@@ -12,5 +13,5 @@ sealed interface HomeIntent {
 }
 
 sealed interface HomeEffect {
-    data class Error(val message: String) : HomeEffect
+    data class Error(@get:StringRes val messageRes: Int) : HomeEffect
 }

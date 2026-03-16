@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_title">Profile</string>
+    <string name="profile_theme_title">Theme</string>
+    <string name="profile_theme_description">Choose how the app should behave in light and dark environments.</string>
+    <string name="profile_theme_family_title">Style</string>
+    <string name="profile_theme_family_description">Choose the visual style of the application interface.</string>
+    <string name="profile_language_title">Language</string>
+    <string name="profile_language_description">Choose the app language or follow the system setting.</string>
+    <string name="profile_error_save_theme">Couldn\'t save the theme</string>
+    <string name="profile_error_save_theme_family">Couldn\'t save the style</string>
+    <string name="profile_error_save_language">Couldn\'t save the language</string>
+</resources>

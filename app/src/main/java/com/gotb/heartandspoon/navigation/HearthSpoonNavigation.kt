@@ -1,5 +1,6 @@
 ﻿package com.gotb.heartandspoon.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.NavigationBar
@@ -7,9 +8,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntryDecorator
@@ -18,6 +20,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.gotb.heartandspoon.R
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.feature.home.HomeRoute
@@ -91,7 +94,7 @@ private fun HearthSpoonBottomBar(
                 selected = destination == currentDestination,
                 onClick = { onDestinationSelected(destination) },
                 icon = {},
-                label = { Text(text = destination.label) },
+                label = { Text(text = stringResource(destination.labelRes)) },
                 alwaysShowLabel = true,
             )
         }
@@ -99,11 +102,11 @@ private fun HearthSpoonBottomBar(
 }
 
 private enum class HearthSpoonTopLevelDestination(
-    val label: String,
+    @get:StringRes val labelRes: Int,
     val rootKey: HearthSpoonNavKey,
 ) {
-    HOME(label = "\u0413\u043b\u0430\u0432\u043d\u0430\u044f", rootKey = Home),
-    PROFILE(label = "\u041f\u0440\u043e\u0444\u0438\u043b\u044c", rootKey = Profile),
+    HOME(labelRes = R.string.nav_home, rootKey = Home),
+    PROFILE(labelRes = R.string.nav_profile, rootKey = Profile),
 }
 
 private fun NavBackStack<NavKey>.navigateToTopLevel(destination: HearthSpoonTopLevelDestination) {

@@ -29,9 +29,9 @@ class HomeViewModel @Inject constructor(
                 .onSuccess { data ->
                     setState { copy(isLoading = false, items = data) }
                 }
-                .onFailure { throwable ->
+                .onFailure {
                     setState { copy(isLoading = false) }
-                    postEffect(HomeEffect.Error(throwable.message ?: "Unknown error"))
+                    postEffect(HomeEffect.Error(R.string.home_error_unknown))
                 }
         }
     }

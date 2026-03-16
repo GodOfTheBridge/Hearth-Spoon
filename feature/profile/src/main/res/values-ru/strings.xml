@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_title">Профиль</string>
+    <string name="profile_theme_title">Тема оформления</string>
+    <string name="profile_theme_description">Выберите, как приложение должно вести себя в светлом и тёмном окружении.</string>
+    <string name="profile_theme_family_title">Стиль оформления</string>
+    <string name="profile_theme_family_description">Выберите художественный стиль интерфейса приложения.</string>
+    <string name="profile_language_title">Язык</string>
+    <string name="profile_language_description">Выберите язык приложения или используйте системную настройку.</string>
+    <string name="profile_error_save_theme">Не удалось сохранить тему</string>
+    <string name="profile_error_save_theme_family">Не удалось сохранить стиль оформления</string>
+    <string name="profile_error_save_language">Не удалось сохранить язык</string>
+</resources>

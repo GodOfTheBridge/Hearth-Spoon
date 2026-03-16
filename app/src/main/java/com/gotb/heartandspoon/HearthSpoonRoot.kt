@@ -4,7 +4,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.designsystem.HearthSpoonTheme
 import com.gotb.heartandspoon.core.model.isEffectivelyDark
 import com.gotb.heartandspoon.navigation.HearthSpoonAppNavigation
@@ -15,6 +18,12 @@ fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
     val systemIsDarkTheme = isSystemInDarkTheme()
 
     if (!state.isReady) {
+        return
+    }
+
+    ApplyAppLanguageEffect(appLanguage = state.activeAppLanguage)
+
+    if (!state.activeAppLanguage.isApplied(applicationLocales = AppCompatDelegate.getApplicationLocales())) {
         return
     }
 
@@ -41,6 +50,24 @@ fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
             onThemeFamilyPreviewed = viewModel::previewThemeFamily,
         )
     }
+}
+
+@Composable
+private fun ApplyAppLanguageEffect(appLanguage: AppLanguage) {
+    LaunchedEffect(appLanguage) {
+        val targetLocales = appLanguage.toLocaleListCompat()
+        if (AppCompatDelegate.getApplicationLocales().toLanguageTags() != targetLocales.toLanguageTags()) {
+            AppCompatDelegate.setApplicationLocales(targetLocales)
+        }
+    }
+}
+
+private fun AppLanguage.isApplied(applicationLocales: LocaleListCompat): Boolean {
+    return toLocaleListCompat().toLanguageTags() == applicationLocales.toLanguageTags()
+}
+
+private fun AppLanguage.toLocaleListCompat(): LocaleListCompat {
+    return languageTag?.let(LocaleListCompat::forLanguageTags) ?: LocaleListCompat.getEmptyLocaleList()
 }
 
 @Composable

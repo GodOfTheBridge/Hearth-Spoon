@@ -1,4 +1,4 @@
-﻿package com.gotb.heartandspoon.feature.home
+package com.gotb.heartandspoon.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,11 +30,12 @@ fun HomeRoute(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is HomeEffect.Error -> snackbarHostState.showSnackbar(effect.message)
+                is HomeEffect.Error -> snackbarHostState.showSnackbar(context.getString(effect.messageRes))
             }
         }
     }
@@ -51,17 +54,18 @@ private fun HomeScreen(
     onOpenDetails: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "\u0413\u043b\u0430\u0432\u043d\u0430\u044f",
+            text = stringResource(R.string.home_title),
             style = MaterialTheme.typography.headlineMedium,
         )
         Button(onClick = onOpenDetails) {
-            Text(text = "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0432\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0439 \u044d\u043a\u0440\u0430\u043d")
+            Text(text = stringResource(R.string.home_open_details))
         }
         if (state.isLoading) {
             CircularProgressIndicator()

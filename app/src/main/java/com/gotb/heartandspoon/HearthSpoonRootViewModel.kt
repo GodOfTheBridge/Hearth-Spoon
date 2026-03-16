@@ -2,8 +2,10 @@ package com.gotb.heartandspoon
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
+import com.gotb.heartandspoon.domain.api.LanguageSettingsRepository
 import com.gotb.heartandspoon.domain.api.ThemeSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 @HiltViewModel
 class HearthSpoonRootViewModel @Inject constructor(
     themeSettingsRepository: ThemeSettingsRepository,
+    languageSettingsRepository: LanguageSettingsRepository,
 ) : ViewModel() {
     private val previewThemeModeState = MutableStateFlow<ThemeMode?>(null)
     private val previewThemeFamilyState = MutableStateFlow<ThemeFamily?>(null)
@@ -24,12 +27,14 @@ class HearthSpoonRootViewModel @Inject constructor(
         combine(
             themeSettingsRepository.themeMode,
             themeSettingsRepository.themeFamily,
+            languageSettingsRepository.appLanguage,
             previewThemeModeState,
             previewThemeFamilyState,
-        ) { savedThemeMode, savedThemeFamily, previewThemeMode, previewThemeFamily ->
+        ) { savedThemeMode, savedThemeFamily, savedAppLanguage, previewThemeMode, previewThemeFamily ->
             HearthSpoonRootUiState(
                 savedThemeMode = savedThemeMode,
                 savedThemeFamily = savedThemeFamily,
+                savedAppLanguage = savedAppLanguage,
                 previewThemeMode = previewThemeMode,
                 previewThemeFamily = previewThemeFamily,
                 isReady = true,
@@ -53,6 +58,7 @@ class HearthSpoonRootViewModel @Inject constructor(
 data class HearthSpoonRootUiState(
     val savedThemeMode: ThemeMode? = null,
     val savedThemeFamily: ThemeFamily? = null,
+    val savedAppLanguage: AppLanguage? = null,
     val previewThemeMode: ThemeMode? = null,
     val previewThemeFamily: ThemeFamily? = null,
     val isReady: Boolean = false,
@@ -62,4 +68,7 @@ data class HearthSpoonRootUiState(
 
     val activeThemeFamily: ThemeFamily
         get() = previewThemeFamily ?: savedThemeFamily ?: ThemeFamily.Khokhloma
+
+    val activeAppLanguage: AppLanguage
+        get() = savedAppLanguage ?: AppLanguage.System
 }

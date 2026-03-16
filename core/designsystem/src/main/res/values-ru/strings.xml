@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_mode_light">Светлая</string>
+    <string name="theme_mode_system">Системная</string>
+    <string name="theme_mode_dark">Тёмная</string>
+    <string name="theme_mode_summary_light">Выбрана светлая тема</string>
+    <string name="theme_mode_summary_system_dark">Сейчас: тёмная</string>
+    <string name="theme_mode_summary_system_light">Сейчас: светлая</string>
+    <string name="theme_mode_summary_dark">Выбрана тёмная тема</string>
+
+    <string name="theme_family_khokhloma">Хохлома</string>
+    <string name="theme_family_gzhel">Гжель</string>
+    <string name="theme_family_summary_selected">Выбран стиль: %1$s</string>
+
+    <string name="app_language_system">Системный</string>
+    <string name="app_language_english">Английский</string>
+    <string name="app_language_russian">Русский</string>
+    <string name="app_language_summary_system">Использовать язык устройства</string>
+    <string name="app_language_summary_english">Интерфейс приложения на английском</string>
+    <string name="app_language_summary_russian">Интерфейс приложения на русском</string>
+</resources>
