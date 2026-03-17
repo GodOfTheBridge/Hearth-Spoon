@@ -3,7 +3,6 @@ package com.gotb.heartandspoon.core.designsystem
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.gotb.heartandspoon.core.model.ThemeFamily
 
 @Composable
@@ -13,28 +12,28 @@ fun ThemeFamilySelector(
     modifier: Modifier = Modifier,
     onThemeFamilyPreviewed: (ThemeFamily?) -> Unit = {},
 ) {
-    val context = LocalContext.current
-
     HSSegmentedSelector(
         modifier = modifier,
         options =
             listOf(
                 HSSegmentedSelectorOption(
                     value = ThemeFamily.Khokhloma,
-                    title = context.getString(themeFamilyTitleRes(ThemeFamily.Khokhloma)),
+                    title = localizedStringResource(themeFamilyTitleRes(ThemeFamily.Khokhloma)),
                 ),
                 HSSegmentedSelectorOption(
                     value = ThemeFamily.Gzhel,
-                    title = context.getString(themeFamilyTitleRes(ThemeFamily.Gzhel)),
+                    title = localizedStringResource(themeFamilyTitleRes(ThemeFamily.Gzhel)),
                 ),
             ),
         selectedOption = selectedThemeFamily,
         onOptionPreviewed = onThemeFamilyPreviewed,
         onOptionSelected = onThemeFamilySelected,
+        segmentTextMotion = HSAnimatedTextMotion.None,
+        supportingTextMotion = HSAnimatedTextMotion.None,
         supportingText = { themeFamily ->
-            context.getString(
+            localizedStringResource(
                 R.string.theme_family_summary_selected,
-                context.getString(themeFamilyTitleRes(themeFamily)),
+                localizedStringResource(themeFamilyTitleRes(themeFamily)),
             )
         },
     )

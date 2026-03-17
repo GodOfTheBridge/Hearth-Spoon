@@ -1,40 +1,47 @@
 package com.gotb.heartandspoon.core.designsystem
 
 import androidx.annotation.StringRes
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.gotb.heartandspoon.core.model.AppLanguage
 
 @Composable
 fun AppLanguageSelector(
     selectedAppLanguage: AppLanguage,
+    onAppLanguagePreviewed: (AppLanguage?) -> Unit = {},
     onAppLanguageSelected: (AppLanguage) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     HSSegmentedSelector(
         modifier = modifier,
         options =
             listOf(
                 HSSegmentedSelectorOption(
+                    value = AppLanguage.Russian,
+                    title = localizedStringResource(R.string.app_language_russian),
+                ),
+                HSSegmentedSelectorOption(
                     value = AppLanguage.System,
-                    title = context.getString(R.string.app_language_system),
+                    title = localizedStringResource(R.string.app_language_system),
                 ),
                 HSSegmentedSelectorOption(
                     value = AppLanguage.English,
-                    title = context.getString(R.string.app_language_english),
-                ),
-                HSSegmentedSelectorOption(
-                    value = AppLanguage.Russian,
-                    title = context.getString(R.string.app_language_russian),
+                    title = localizedStringResource(R.string.app_language_english),
                 ),
             ),
         selectedOption = selectedAppLanguage,
+        onOptionPreviewed = onAppLanguagePreviewed,
         onOptionSelected = onAppLanguageSelected,
+        segmentTextStyle = MaterialTheme.typography.labelMedium,
+        segmentHorizontalPadding = 4.dp,
+        segmentTextOverflow = TextOverflow.Ellipsis,
+        segmentTextMotion = HSAnimatedTextMotion.Rotor,
+        supportingTextMotion = HSAnimatedTextMotion.None,
         supportingText = { appLanguage ->
-            context.getString(appLanguageSummaryRes(appLanguage))
+            localizedStringResource(appLanguageSummaryRes(appLanguage))
         },
     )
 }

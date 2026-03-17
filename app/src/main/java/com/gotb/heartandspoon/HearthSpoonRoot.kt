@@ -4,10 +4,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gotb.heartandspoon.core.model.AppLanguage
+import com.gotb.heartandspoon.core.designsystem.ProvideHSLocalizedResources
 import com.gotb.heartandspoon.core.designsystem.HearthSpoonTheme
 import com.gotb.heartandspoon.core.model.isEffectivelyDark
 import com.gotb.heartandspoon.navigation.HearthSpoonAppNavigation
@@ -21,12 +19,6 @@ fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
         return
     }
 
-    ApplyAppLanguageEffect(appLanguage = state.activeAppLanguage)
-
-    if (!state.activeAppLanguage.isApplied(applicationLocales = AppCompatDelegate.getApplicationLocales())) {
-        return
-    }
-
     ClearCommittedPreviewEffect(
         savedValue = state.savedThemeMode,
         previewValue = state.previewThemeMode,
@@ -37,37 +29,29 @@ fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
         previewValue = state.previewThemeFamily,
         clearPreview = viewModel::previewThemeFamily,
     )
+    ClearCommittedPreviewEffect(
+        savedValue = state.savedAppLanguage,
+        previewValue = state.previewAppLanguage,
+        clearPreview = viewModel::previewAppLanguage,
+    )
 
     val effectiveIsDarkTheme = state.activeThemeMode.isEffectivelyDark(systemIsDarkTheme = systemIsDarkTheme)
 
-    HearthSpoonTheme(
-        themeFamily = state.activeThemeFamily,
-        isDarkTheme = effectiveIsDarkTheme,
-    ) {
-        HearthSpoonAppNavigation(
-            previewThemeMode = state.previewThemeMode,
-            onThemeModePreviewed = viewModel::previewThemeMode,
-            onThemeFamilyPreviewed = viewModel::previewThemeFamily,
-        )
-    }
-}
-
-@Composable
-private fun ApplyAppLanguageEffect(appLanguage: AppLanguage) {
-    LaunchedEffect(appLanguage) {
-        val targetLocales = appLanguage.toLocaleListCompat()
-        if (AppCompatDelegate.getApplicationLocales().toLanguageTags() != targetLocales.toLanguageTags()) {
-            AppCompatDelegate.setApplicationLocales(targetLocales)
+    ProvideHSLocalizedResources(appLanguage = state.activeAppLanguage) {
+        HearthSpoonTheme(themeFamily = state.activeThemeFamily, isDarkTheme = effectiveIsDarkTheme) {
+            HearthSpoonAppNavigation(
+                initialBackStack = state.navBackStack,
+                initialThemeMode = state.savedThemeMode ?: state.activeThemeMode,
+                initialThemeFamily = state.savedThemeFamily ?: state.activeThemeFamily,
+                initialAppLanguage = state.savedAppLanguage ?: state.activeAppLanguage,
+                previewThemeMode = state.previewThemeMode,
+                onThemeModePreviewed = viewModel::previewThemeMode,
+                onThemeFamilyPreviewed = viewModel::previewThemeFamily,
+                onAppLanguagePreviewed = viewModel::previewAppLanguage,
+                onBackStackChanged = viewModel::setNavBackStack,
+            )
         }
     }
-}
-
-private fun AppLanguage.isApplied(applicationLocales: LocaleListCompat): Boolean {
-    return toLocaleListCompat().toLanguageTags() == applicationLocales.toLanguageTags()
-}
-
-private fun AppLanguage.toLocaleListCompat(): LocaleListCompat {
-    return languageTag?.let(LocaleListCompat::forLanguageTags) ?: LocaleListCompat.getEmptyLocaleList()
 }
 
 @Composable

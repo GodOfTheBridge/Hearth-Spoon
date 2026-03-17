@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
+import com.gotb.heartandspoon.navigation.HearthSpoonNavKey
+import com.gotb.heartandspoon.navigation.Home
 import com.gotb.heartandspoon.domain.api.LanguageSettingsRepository
 import com.gotb.heartandspoon.domain.api.ThemeSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,21 +24,37 @@ class HearthSpoonRootViewModel @Inject constructor(
 ) : ViewModel() {
     private val previewThemeModeState = MutableStateFlow<ThemeMode?>(null)
     private val previewThemeFamilyState = MutableStateFlow<ThemeFamily?>(null)
+    private val previewAppLanguageState = MutableStateFlow<AppLanguage?>(null)
+    private val navBackStackState = MutableStateFlow<List<HearthSpoonNavKey>>(listOf(Home))
+    private val previewSettingsState =
+        combine(previewThemeModeState, previewThemeFamilyState, previewAppLanguageState) {
+                previewThemeMode,
+                previewThemeFamily,
+                previewAppLanguage,
+            ->
+            PreviewSettingsState(
+                previewThemeMode = previewThemeMode,
+                previewThemeFamily = previewThemeFamily,
+                previewAppLanguage = previewAppLanguage,
+            )
+        }
 
     val uiState: StateFlow<HearthSpoonRootUiState> =
         combine(
             themeSettingsRepository.themeMode,
             themeSettingsRepository.themeFamily,
             languageSettingsRepository.appLanguage,
-            previewThemeModeState,
-            previewThemeFamilyState,
-        ) { savedThemeMode, savedThemeFamily, savedAppLanguage, previewThemeMode, previewThemeFamily ->
+            navBackStackState,
+            previewSettingsState,
+        ) { savedThemeMode, savedThemeFamily, savedAppLanguage, navBackStack, previewSettings ->
             HearthSpoonRootUiState(
                 savedThemeMode = savedThemeMode,
                 savedThemeFamily = savedThemeFamily,
                 savedAppLanguage = savedAppLanguage,
-                previewThemeMode = previewThemeMode,
-                previewThemeFamily = previewThemeFamily,
+                navBackStack = navBackStack,
+                previewThemeMode = previewSettings.previewThemeMode,
+                previewThemeFamily = previewSettings.previewThemeFamily,
+                previewAppLanguage = previewSettings.previewAppLanguage,
                 isReady = true,
             )
         }
@@ -53,14 +71,33 @@ class HearthSpoonRootViewModel @Inject constructor(
     fun previewThemeFamily(themeFamily: ThemeFamily?) {
         previewThemeFamilyState.value = themeFamily
     }
+
+    fun previewAppLanguage(appLanguage: AppLanguage?) {
+        previewAppLanguageState.value = appLanguage
+    }
+
+    fun setNavBackStack(navBackStack: List<HearthSpoonNavKey>) {
+        val normalizedBackStack = navBackStack.ifEmpty { listOf(Home) }
+        if (navBackStackState.value != normalizedBackStack) {
+            navBackStackState.value = normalizedBackStack
+        }
+    }
 }
+
+private data class PreviewSettingsState(
+    val previewThemeMode: ThemeMode? = null,
+    val previewThemeFamily: ThemeFamily? = null,
+    val previewAppLanguage: AppLanguage? = null,
+)
 
 data class HearthSpoonRootUiState(
     val savedThemeMode: ThemeMode? = null,
     val savedThemeFamily: ThemeFamily? = null,
     val savedAppLanguage: AppLanguage? = null,
+    val navBackStack: List<HearthSpoonNavKey> = listOf(Home),
     val previewThemeMode: ThemeMode? = null,
     val previewThemeFamily: ThemeFamily? = null,
+    val previewAppLanguage: AppLanguage? = null,
     val isReady: Boolean = false,
 ) {
     val activeThemeMode: ThemeMode
@@ -70,5 +107,5 @@ data class HearthSpoonRootUiState(
         get() = previewThemeFamily ?: savedThemeFamily ?: ThemeFamily.Khokhloma
 
     val activeAppLanguage: AppLanguage
-        get() = savedAppLanguage ?: AppLanguage.System
+        get() = previewAppLanguage ?: savedAppLanguage ?: AppLanguage.System
 }

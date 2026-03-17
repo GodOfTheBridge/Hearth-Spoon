@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_title">Главная</string>
-    <string name="home_open_details">Открыть внутренний экран</string>
+    <string name="home_open_details">Открыть экран деталей</string>
     <string name="home_error_unknown">Неизвестная ошибка</string>
+    <string name="home_seed_welcome">Добро пожаловать в Hearth Spoon</string>
+    <string name="home_seed_stack">Compose + MVI + Hilt</string>
 </resources>

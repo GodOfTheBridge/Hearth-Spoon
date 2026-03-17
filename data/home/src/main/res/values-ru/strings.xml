@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="home_seed_welcome">Добро пожаловать в Hearth Spoon</string>
-    <string name="home_seed_stack">Compose + MVI + Hilt</string>
-</resources>

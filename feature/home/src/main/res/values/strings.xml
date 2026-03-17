@@ -3,4 +3,6 @@
     <string name="home_title">Home</string>
     <string name="home_open_details">Open details screen</string>
     <string name="home_error_unknown">Unknown error</string>
+    <string name="home_seed_welcome">Welcome to Hearth Spoon</string>
+    <string name="home_seed_stack">Compose + MVI + Hilt</string>
 </resources>

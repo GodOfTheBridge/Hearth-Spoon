@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.gotb.heartandspoon.core.designsystem.HSAnimatedText
+import com.gotb.heartandspoon.core.designsystem.localizedStringResource
 
 @Composable
 fun HomeDetailsRoute(onBack: () -> Unit) {
@@ -21,12 +21,12 @@ fun HomeDetailsRoute(onBack: () -> Unit) {
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = stringResource(R.string.home_details_title),
+        HSAnimatedText(
+            text = localizedStringResource(R.string.home_details_title),
             style = MaterialTheme.typography.headlineMedium,
         )
         Button(onClick = onBack) {
-            Text(text = stringResource(R.string.home_details_back))
+            HSAnimatedText(text = localizedStringResource(R.string.home_details_back))
         }
     }
 }

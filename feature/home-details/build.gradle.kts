@@ -4,3 +4,7 @@ plugins {
 }
 
 android { namespace = "com.gotb.heartandspoon.feature.homedetails" }
+
+dependencies {
+    implementation(project(":core:designsystem"))
+}

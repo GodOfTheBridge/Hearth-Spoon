@@ -12,8 +12,8 @@
     <string name="theme_family_gzhel">Гжель</string>
     <string name="theme_family_summary_selected">Выбран стиль: %1$s</string>
 
-    <string name="app_language_system">Системный</string>
-    <string name="app_language_english">Английский</string>
+    <string name="app_language_system">Система</string>
+    <string name="app_language_english">English</string>
     <string name="app_language_russian">Русский</string>
     <string name="app_language_summary_system">Использовать язык устройства</string>
     <string name="app_language_summary_english">Интерфейс приложения на английском</string>

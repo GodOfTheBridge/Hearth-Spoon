@@ -2,7 +2,6 @@ package com.gotb.heartandspoon.core.designsystem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.annotation.StringRes
 import com.gotb.heartandspoon.core.model.ThemeMode
 
@@ -14,30 +13,30 @@ fun ThemeModeSelector(
     onThemeModeSelected: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     HSSegmentedSelector(
         modifier = modifier,
         options =
             listOf(
                 HSSegmentedSelectorOption(
                     value = ThemeMode.Light,
-                    title = context.getString(R.string.theme_mode_light),
+                    title = localizedStringResource(R.string.theme_mode_light),
                 ),
                 HSSegmentedSelectorOption(
                     value = ThemeMode.System,
-                    title = context.getString(R.string.theme_mode_system),
+                    title = localizedStringResource(R.string.theme_mode_system),
                 ),
                 HSSegmentedSelectorOption(
                     value = ThemeMode.Dark,
-                    title = context.getString(R.string.theme_mode_dark),
+                    title = localizedStringResource(R.string.theme_mode_dark),
                 ),
             ),
         selectedOption = selectedThemeMode,
         onOptionPreviewed = onThemeModePreviewed,
         onOptionSelected = onThemeModeSelected,
+        segmentTextMotion = HSAnimatedTextMotion.None,
+        supportingTextMotion = HSAnimatedTextMotion.None,
         supportingText = { themeMode ->
-            context.getString(
+            localizedStringResource(
                 themeModeSummaryTextRes(
                     selectedThemeMode = themeMode,
                     effectiveIsDarkTheme = effectiveIsDarkTheme,

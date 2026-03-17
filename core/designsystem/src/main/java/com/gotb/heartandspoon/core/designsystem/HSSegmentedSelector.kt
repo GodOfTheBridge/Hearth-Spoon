@@ -1,6 +1,5 @@
 package com.gotb.heartandspoon.core.designsystem
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -28,7 +27,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,8 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.collect
@@ -65,7 +66,12 @@ internal fun <T : Any> HSSegmentedSelector(
     onOptionSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
     onOptionPreviewed: (T?) -> Unit = {},
-    supportingText: ((T) -> String)? = null,
+    supportingText: (@Composable (T) -> String)? = null,
+    segmentTextStyle: TextStyle? = null,
+    segmentHorizontalPadding: Dp = 8.dp,
+    segmentTextOverflow: TextOverflow = TextOverflow.Clip,
+    segmentTextMotion: HSAnimatedTextMotion = HSAnimatedTextMotion.Fade,
+    supportingTextMotion: HSAnimatedTextMotion = HSAnimatedTextMotion.Fade,
 ) {
     require(options.isNotEmpty()) { "HSSegmentedSelector requires at least one option." }
     require(options.any { option -> option.value == selectedOption }) {
@@ -77,6 +83,7 @@ internal fun <T : Any> HSSegmentedSelector(
     val currentSelectedOption by rememberUpdatedState(selectedOption)
     val currentOnOptionPreviewed by rememberUpdatedState(onOptionPreviewed)
     val currentOnOptionSelected by rememberUpdatedState(onOptionSelected)
+    val resolvedSegmentTextStyle = segmentTextStyle ?: MaterialTheme.typography.labelLarge
     val selectorState = remember { AnchoredDraggableState(initialValue = selectedOption) }
     var lastPreviewedOption by remember { mutableStateOf<T?>(null) }
     val flingBehavior =
@@ -234,6 +241,10 @@ internal fun <T : Any> HSSegmentedSelector(
                                     .fillMaxHeight(),
                             title = option.title,
                             selected = visualSelectedOption == option.value,
+                            textStyle = resolvedSegmentTextStyle,
+                            horizontalPadding = segmentHorizontalPadding,
+                            textOverflow = segmentTextOverflow,
+                            textMotion = segmentTextMotion,
                             onClick = {
                                 if (option.value == selectorState.targetValue || segmentWidthPx <= 0f) {
                                     return@HSSegmentedSelectorSegment
@@ -254,17 +265,12 @@ internal fun <T : Any> HSSegmentedSelector(
             }
 
             supportingText?.let { textProvider ->
-                Crossfade(
-                    targetState = textProvider(visualSelectedOption),
-                    animationSpec = hsStandardMotionSpec(),
-                    label = "hsSegmentedSelectorSupportingText",
-                ) { text ->
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                HSAnimatedText(
+                    text = textProvider(visualSelectedOption),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    motion = supportingTextMotion,
+                )
             }
         }
     }
@@ -275,6 +281,10 @@ private fun HSSegmentedSelectorSegment(
     modifier: Modifier,
     title: String,
     selected: Boolean,
+    textStyle: TextStyle,
+    horizontalPadding: Dp,
+    textOverflow: TextOverflow,
+    textMotion: HSAnimatedTextMotion,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -300,12 +310,12 @@ private fun HSSegmentedSelectorSegment(
                     indication = null,
                     onClick = onClick,
                 )
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = horizontalPadding),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        HSAnimatedText(
             text = title,
-            style = MaterialTheme.typography.labelLarge,
+            style = textStyle,
             fontWeight =
                 if (selected) {
                     FontWeight.SemiBold
@@ -315,6 +325,9 @@ private fun HSSegmentedSelectorSegment(
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = 1,
+            overflow = textOverflow,
+            softWrap = false,
+            motion = textMotion,
         )
     }
 }

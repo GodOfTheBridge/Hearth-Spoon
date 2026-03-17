@@ -36,6 +36,7 @@ class ProfileViewModel @Inject constructor(
                     themeFamily = themeFamily,
                     appLanguage = appLanguage,
                     errorMessageRes = errorMessageRes,
+                    isReady = true,
                 )
             }
             .stateIn(
@@ -87,4 +88,5 @@ data class ProfileUiState(
     val themeFamily: ThemeFamily = ThemeFamily.Khokhloma,
     val appLanguage: AppLanguage = AppLanguage.System,
     @get:StringRes val errorMessageRes: Int? = null,
+    val isReady: Boolean = false,
 )

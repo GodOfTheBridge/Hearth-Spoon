@@ -6,56 +6,86 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import com.gotb.heartandspoon.core.designsystem.HSAnimatedText
+import com.gotb.heartandspoon.core.designsystem.HSAnimatedTextMotion
+import com.gotb.heartandspoon.core.designsystem.localizedStringResource
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.gotb.heartandspoon.R
+import com.gotb.heartandspoon.core.model.AppLanguage
 import com.gotb.heartandspoon.core.model.ThemeFamily
 import com.gotb.heartandspoon.core.model.ThemeMode
 import com.gotb.heartandspoon.feature.home.HomeRoute
 import com.gotb.heartandspoon.feature.homedetails.HomeDetailsRoute
 import com.gotb.heartandspoon.feature.profile.ProfileRoute
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun HearthSpoonAppNavigation(
+    initialBackStack: List<HearthSpoonNavKey>,
+    initialThemeMode: ThemeMode,
+    initialThemeFamily: ThemeFamily,
+    initialAppLanguage: AppLanguage,
     previewThemeMode: ThemeMode?,
     onThemeModePreviewed: (ThemeMode?) -> Unit,
     onThemeFamilyPreviewed: (ThemeFamily?) -> Unit,
+    onAppLanguagePreviewed: (AppLanguage?) -> Unit,
+    onBackStackChanged: (List<HearthSpoonNavKey>) -> Unit,
 ) {
-    val backStack = rememberNavBackStack(Home)
+    val backStack: NavBackStack<HearthSpoonNavKey> = remember { NavBackStack(*initialBackStack.toTypedArray()) }
+    val currentInitialThemeMode = rememberUpdatedState(initialThemeMode)
+    val currentInitialThemeFamily = rememberUpdatedState(initialThemeFamily)
+    val currentInitialAppLanguage = rememberUpdatedState(initialAppLanguage)
     val currentPreviewThemeMode = rememberUpdatedState(previewThemeMode)
     val currentOnThemeModePreviewed = rememberUpdatedState(onThemeModePreviewed)
     val currentOnThemeFamilyPreviewed = rememberUpdatedState(onThemeFamilyPreviewed)
+    val currentOnAppLanguagePreviewed = rememberUpdatedState(onAppLanguagePreviewed)
+    val currentOnBackStackChanged = rememberUpdatedState(onBackStackChanged)
+
+    LaunchedEffect(backStack) {
+        snapshotFlow { backStack.toList().filterIsInstance<HearthSpoonNavKey>() }
+            .map { navBackStack -> navBackStack.ifEmpty { listOf(Home) } }
+            .drop(1)
+            .collectLatest { navBackStack ->
+                currentOnBackStackChanged.value(navBackStack)
+            }
+    }
     val entryProvider =
         remember(backStack) {
-            entryProvider<NavKey> {
+            entryProvider<HearthSpoonNavKey> {
                 entry<Home> {
                     HomeRoute(onOpenDetails = { backStack.add(HomeDetails) })
                 }
                 entry<HomeDetails> {
-                    HomeDetailsRoute(onBack = { backStack.removeLastOrNull() })
+                    HomeDetailsRoute(onBack = { backStack.removeLastOrNullCompat() })
                 }
                 entry<Profile> {
                     ProfileRoute(
+                        initialThemeMode = currentInitialThemeMode.value,
+                        initialThemeFamily = currentInitialThemeFamily.value,
+                        initialAppLanguage = currentInitialAppLanguage.value,
                         previewThemeMode = currentPreviewThemeMode.value,
                         onThemeModePreviewed = currentOnThemeModePreviewed.value,
                         onThemeFamilyPreviewed = currentOnThemeFamilyPreviewed.value,
+                        onAppLanguagePreviewed = currentOnAppLanguagePreviewed.value,
                     )
                 }
             }
         }
-    val entryDecorators: List<NavEntryDecorator<NavKey>> =
+    val entryDecorators: List<NavEntryDecorator<HearthSpoonNavKey>> =
         listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
@@ -76,7 +106,7 @@ fun HearthSpoonAppNavigation(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            onBack = { backStack.removeLastOrNull() },
+            onBack = { backStack.removeLastOrNullCompat() },
             entryDecorators = entryDecorators,
             entryProvider = entryProvider,
         )
@@ -94,7 +124,12 @@ private fun HearthSpoonBottomBar(
                 selected = destination == currentDestination,
                 onClick = { onDestinationSelected(destination) },
                 icon = {},
-                label = { Text(text = stringResource(destination.labelRes)) },
+                label = {
+                    HSAnimatedText(
+                        text = localizedStringResource(destination.labelRes),
+                        motion = HSAnimatedTextMotion.None,
+                    )
+                },
                 alwaysShowLabel = true,
             )
         }
@@ -109,10 +144,16 @@ private enum class HearthSpoonTopLevelDestination(
     PROFILE(labelRes = R.string.nav_profile, rootKey = Profile),
 }
 
-private fun NavBackStack<NavKey>.navigateToTopLevel(destination: HearthSpoonTopLevelDestination) {
+private fun NavBackStack<HearthSpoonNavKey>.navigateToTopLevel(destination: HearthSpoonTopLevelDestination) {
     if (size == 1 && lastOrNull() == destination.rootKey) return
     clear()
     add(destination.rootKey)
+}
+
+private fun NavBackStack<HearthSpoonNavKey>.removeLastOrNullCompat() {
+    if (isNotEmpty()) {
+        removeAt(lastIndex)
+    }
 }
 
 private fun NavKey?.toTopLevelDestination(): HearthSpoonTopLevelDestination =
