@@ -56,9 +56,10 @@ fun HearthSpoonAppNavigation(
     val currentOnAppLanguagePreviewed = rememberUpdatedState(onAppLanguagePreviewed)
     val currentOnBackStackChanged = rememberUpdatedState(onBackStackChanged)
     val currentOnExitRequested = rememberUpdatedState(onExitRequested)
-    val onBackRequested = {
+    val onBackRequested: () -> Unit = {
         if (backStack.size > 1) {
             backStack.removeAt(backStack.lastIndex)
+            Unit
         } else {
             currentOnExitRequested.value()
         }
