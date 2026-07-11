@@ -1,111 +1,124 @@
 # AGENTS.md
 
-## Scope
-This repository is an Android project built with Kotlin and Gradle.
-Follow the existing architecture, naming, and module boundaries.
-Prefer the smallest correct change that fully solves the task.
+## Область действия
+
+Этот репозиторий содержит Android-проект на Kotlin и Gradle.
+Следуй существующей архитектуре, именованию и границам модулей.
+Предпочитай минимальное корректное изменение, которое полностью решает задачу.
 
 ## Документация
+
 - Для локального запуска и сборки используй `README.md`.
 - Для архитектурных решений и устойчивых правил используй `ARCHITECTURE.md`.
 - При изменении устойчивых архитектурных правил обновляй соответствующую документацию в том же изменении.
 
-## Core rules
-- Read nearby code before editing and match the existing architecture, naming, and style.
-- Change only files required for the task.
-- Never revert, rewrite, or reformat unrelated user or agent changes.
-- Do not introduce new libraries, plugins, or frameworks unless they are clearly required by the task.
-- Prefer localized fixes over broad refactors.
-- Preserve existing public APIs unless the task explicitly requires changing them.
+## Основные правила
 
-## Android architecture
-- Keep module boundaries intact.
-- Reuse the existing DI, navigation, UI-state, and error-handling patterns already used in the affected module.
-- Keep business logic out of Activities, Fragments, and Composables.
-- Prefer ViewModel/use-case/repository level fixes over UI-layer workarounds.
-- Do not make a feature module depend directly on a data implementation module unless the architecture already does so.
-- Keep interfaces in domain-facing modules and implementations in data-facing modules when that pattern already exists.
+- Перед изменением прочитай соседний код и следуй существующей архитектуре, именованию и стилю.
+- Изменяй только файлы, необходимые для решения задачи.
+- Не отменяй, не переписывай и не форматируй несвязанные изменения пользователя или других агентов.
+- Не добавляй библиотеки, плагины и фреймворки без явной необходимости.
+- Предпочитай локальные исправления широким рефакторингам.
+- Сохраняй существующие публичные API, если задача явно не требует их изменения.
 
-## Compose rules
-- Apply Compose-specific configuration only to modules that actually contain Compose UI code.
-- Do not enable Compose globally for all Android modules.
-- If a module applies the Compose compiler plugin, ensure required Compose runtime dependencies are present on that module classpath.
-- Do not add Compose dependencies to non-UI modules unless the task explicitly requires it.
-- Prefer minimal Compose dependency sets and reuse existing BOM/version patterns in the repository.
+## Архитектура Android
 
-## DI / Hilt rules
-- Reuse the existing Hilt setup and module placement patterns.
-- Keep interfaces in domain/api modules when that is the current architecture.
-- Keep bindings/providers in the appropriate data/core module.
-- Do not move DI wiring across modules unless the task explicitly requires it.
-- If editing Hilt modules, verify that the consuming module still receives the expected bindings.
+- Сохраняй границы модулей.
+- Используй принятые в затронутом модуле подходы к DI, навигации, состоянию UI и обработке ошибок.
+- Не размещай бизнес-правила в `Activity`, `Fragment`, `Composable` или экранной `ViewModel`.
+- Оставляй во `ViewModel` состояние экрана, логику представления и оркестрацию. Независимые от UI бизнес-правила размещай в доменном слое, при необходимости выделяя use case, а доступ к данным выполняй через контракты репозиториев.
+- Не добавляй прямую зависимость feature-модуля от реализации из `data:*`. Изменение этого правила требует явного архитектурного решения и обновления `ARCHITECTURE.md`.
+- Сохраняй интерфейсы в доменных модулях, а реализации — в data-модулях, если этот паттерн уже используется.
 
-## Build logic and convention plugin safety
-- Be very careful when changing `build-logic`, convention plugins, version catalogs, plugin management, or settings scripts.
-- If changing a convention plugin, keep plugin ids, implementationClass names, package names, and source file names consistent.
-- Use fully qualified implementation class names where required.
-- Prefer minimal fixes in convention plugins over broad restructuring.
-- When changing shared build logic, validate at least one module that applies the changed plugin.
-- Do not rename plugin ids, modules, or package paths unless explicitly required by the task.
+## Правила Compose
 
-## Build and dependency safety
-- Do not change Gradle Wrapper, AGP, Kotlin version, Compose compiler versioning strategy, version catalog, convention plugins, CI, signing, publishing, or release config unless the task explicitly requires it.
-- Do not upgrade or downgrade dependencies "while here".
-- If the project uses product flavors or custom build types, use existing variants already defined in the repo.
-- Do not invent new Gradle task names, build variants, or source sets.
-- Assume JDK 17 unless the task explicitly requires another version.
-- If build validation is blocked by an environment mismatch, state the exact mismatch clearly.
+- Применяй Compose-конфигурацию только к модулям, которые действительно содержат Compose UI.
+- Не включай Compose глобально для всех Android-модулей.
+- Если модуль применяет плагин компилятора Compose, убедись, что необходимые зависимости Compose Runtime доступны в его classpath.
+- Не добавляй Compose-зависимости в не-UI-модули, если задача явно этого не требует.
+- Предпочитай минимальный набор Compose-зависимостей и используй существующие BOM и версии проекта.
 
-## Validation
-- Start with the smallest relevant Gradle task.
-- If only one module changed, prefer module-scoped checks before running project-wide checks.
-- Run only the smallest relevant build, test, or lint check for the touched code.
-- Avoid project-wide validation unless the change affects shared build logic, dependency management, multiple modules, or application wiring.
-- If you cannot run validation, say exactly why.
+## Правила DI и Hilt
 
-## Typical validation commands
-Use the smallest relevant command first.
+- Используй существующую конфигурацию Hilt и принятые места размещения модулей.
+- Храни интерфейсы в `domain:api`, а биндинги и провайдеры — в соответствующем `data:*` или `core:*` модуле.
+- Не перемещай DI-конфигурацию между модулями, если задача явно этого не требует.
+- При изменении Hilt-модулей проверь, что потребляющий модуль по-прежнему получает ожидаемые биндинги.
+
+## Безопасность логики сборки и convention plugins
+
+- С особой осторожностью изменяй `build-logic`, convention plugins, каталог версий, plugin management и settings-скрипты.
+- При изменении convention plugin сохраняй согласованность идентификатора плагина, `implementationClass`, имени пакета и имени исходного файла.
+- Используй полные имена классов там, где они необходимы.
+- Предпочитай минимальные исправления convention plugins широкой реструктуризации.
+- После изменения общей build logic проверь хотя бы один модуль, применяющий затронутый плагин.
+- Не переименовывай идентификаторы плагинов, модули и пути пакетов, если задача явно этого не требует.
+
+## Безопасность сборки и зависимостей
+
+- Не изменяй Gradle Wrapper, AGP, версию Kotlin, стратегию версионирования компилятора Compose, каталог версий, convention plugins, CI, подписывание, публикацию или release-конфигурацию, если задача явно этого не требует.
+- Не обновляй и не понижай версии зависимостей попутно.
+- Если проект использует product flavors или нестандартные build types, используй уже существующие варианты.
+- Не придумывай новые имена Gradle-задач, варианты сборки и source sets.
+- Используй JDK 17, если задача явно не требует другой версии.
+- Если проверке мешает несовместимость окружения, укажи точную причину.
+
+## Проверка изменений
+
+- Начинай с минимальной релевантной Gradle-задачи.
+- Если изменён один модуль, сначала запускай модульные проверки.
+- Выполняй только минимальные сборки, тесты или lint-проверки, необходимые для затронутого кода.
+- Запускай проверки всего проекта только для изменений общей build logic, управления зависимостями, нескольких модулей или сборки приложения.
+- Если выполнить проверку невозможно, укажи точную причину.
+
+## Типовые команды проверки
+
+Сначала используй минимальную релевантную команду.
 
 - `./gradlew :app:assembleDebug`
 - `./gradlew testDebugUnitTest`
 - `./gradlew lintDebug`
 
-Module-scoped examples:
+Примеры для отдельных модулей:
+
 - `./gradlew :feature:home:compileDebugKotlin`
 - `./gradlew :core:ui:compileDebugKotlin`
 - `./gradlew :data:home:testDebugUnitTest`
 
-## Binary files policy
-- Do not add or modify binary files through Codex PR flow.
-- Do not commit generated artifacts or build outputs such as `*.apk`, `*.aab`, `*.aar`, `*/build/*`, caches, or IDE artifacts.
-- Do not modify `gradle/wrapper/gradle-wrapper.jar` through Codex PR flow.
-- If Gradle Wrapper must be updated, change only text files such as `gradle/wrapper/gradle-wrapper.properties`, `gradlew`, and `gradlew.bat`, and clearly note that `gradle-wrapper.jar` must be restored or updated manually outside Codex PR flow.
-- If a task requires a binary asset, make only the necessary source/text changes and clearly document the manual step.
+## Политика бинарных файлов
 
-## Files that must not be committed
+- Не добавляй и не изменяй бинарные файлы через PR-процесс Codex.
+- Не коммить сгенерированные артефакты и результаты сборки: `*.apk`, `*.aab`, `*.aar`, `*/build/*`, кэши и файлы IDE.
+- Не изменяй `gradle/wrapper/gradle-wrapper.jar` через PR-процесс Codex.
+- Если требуется обновить Gradle Wrapper, меняй только текстовые файлы: `gradle/wrapper/gradle-wrapper.properties`, `gradlew` и `gradlew.bat`. Явно укажи, что `gradle-wrapper.jar` нужно восстановить или обновить вручную вне PR-процесса Codex.
+- Если задача требует бинарного ресурса, внеси только необходимые изменения исходных или текстовых файлов и опиши ручной шаг.
+
+## Файлы, которые нельзя коммитить
+
 - `local.properties`
 - `.gradle/`
 - `.idea/`
 - `**/build/`
 - `*.iml`
-- signing keys, keystores, credentials, secrets, tokens
-- generated reports unless the task explicitly asks for them
+- ключи подписи, keystore-файлы, учётные данные, секреты и токены
+- сгенерированные отчёты, если задача явно их не требует
 
-## Change discipline
-- Keep diffs focused and easy to review.
-- Do not mix architectural cleanup with functional fixes unless explicitly requested.
-- Do not silently remove dependencies, modules, or features unless that is the task.
-- When fixing build issues, identify the smallest real cause and fix that cause directly.
+## Дисциплина изменений
 
-## Finish criteria
-At the end of the task:
-- Confirm what changed.
-- List the validation commands actually run.
-- State what was not validated.
-- Mention any remaining risk, environment limitation, or manual follow-up needed.
+- Делай дифф сфокусированным и удобным для ревью.
+- Не смешивай архитектурную уборку с функциональными исправлениями, если это явно не запрошено.
+- Не удаляй зависимости, модули и функции без явного указания задачи.
+- При исправлении сборки найди минимальную реальную причину и исправь непосредственно её.
 
-## Pull request language
-- PR title, PR description, and final summary to the user must always be written in Russian.
-# User-provided custom instructions
+## Критерии завершения
 
-PR всегда пиши на русском языке
+В конце задачи:
+
+- подтверди, что было изменено;
+- перечисли фактически выполненные команды проверки;
+- укажи, что не было проверено;
+- упомяни оставшиеся риски, ограничения окружения и необходимые ручные действия.
+
+## Язык pull request
+
+- Всегда пиши заголовок, описание pull request и итоговое резюме для пользователя на русском языке.

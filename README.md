@@ -1,8 +1,10 @@
 # Hearth & Spoon
 
-`Hearth & Spoon` - Android-приложение на Kotlin с Compose UI и многомодульной структурой. Репозиторий разделен на слои `app`, `core`, `domain`, `data`, `feature`; устойчивые архитектурные правила и соглашения описаны в [ARCHITECTURE.md](./ARCHITECTURE.md).
+Hearth & Spoon — развиваемое многомодульное Android-приложение на Kotlin и Jetpack Compose. Сейчас в проекте реализованы базовая навигация, загрузка содержимого главного экрана, экран деталей и пользовательские настройки темы и языка.
 
-## Стек
+Репозиторий разделён на слои `app`, `core`, `domain`, `data` и `feature`. Устойчивые архитектурные решения и правила зависимостей описаны в [ARCHITECTURE.md](./ARCHITECTURE.md).
+
+## Технологии
 
 - Kotlin
 - Jetpack Compose
@@ -10,43 +12,75 @@
 - Hilt
 - Room
 - Ktor
-- multi-module Gradle
 - Navigation 3
+- многомодульная сборка Gradle
 
 ## Требования
 
 - JDK 17
-- Android SDK, настроенный через `ANDROID_HOME` или `local.properties`
+- Android SDK Platform 36
+- Android Studio для запуска из IDE
+- Android-устройство или эмулятор с API 24 и выше
+- путь к Android SDK, заданный через `ANDROID_HOME` или свойство `sdk.dir` в `local.properties`
 
-## Локальная сборка
+Перед сборкой убедитесь, что команда `java -version` указывает на JDK 17.
 
-На Windows:
+## Локальный запуск
+
+1. Откройте корень репозитория в Android Studio.
+2. Дождитесь завершения Gradle Sync.
+3. Выберите конфигурацию `app` и устройство с API 24 или выше.
+4. Запустите приложение кнопкой **Run**.
+
+Для установки debug-сборки из командной строки используйте:
+
+```powershell
+# Windows
+.\gradlew.bat :app:installDebug
+```
+
+```bash
+# macOS / Linux
+./gradlew :app:installDebug
+```
+
+## Сборка и проверки
+
+Сборка debug-варианта на Windows:
 
 ```powershell
 .\gradlew.bat :app:assembleDebug
 ```
 
-На macOS / Linux:
+На macOS или Linux:
 
 ```bash
 ./gradlew :app:assembleDebug
 ```
 
-Для минимальной локальной проверки после изменений можно использовать:
+Основные локальные проверки:
 
 ```powershell
 .\gradlew.bat testDebugUnitTest
+.\gradlew.bat lintDebug
 ```
+
+Для изменения в одном модуле сначала запускайте соответствующую модульную задачу.
+
+## Структура проекта
+
+- `app` — точка входа, сборка DI-графа и верхнеуровневая навигация.
+- `core` — общие модели, UI-компоненты и инфраструктура.
+- `domain` — публичные доменные контракты.
+- `data` — реализации репозиториев и источники данных.
+- `feature` — пользовательские сценарии и экраны.
+
+Подробные границы модулей зафиксированы в [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## Если отсутствует `gradle-wrapper.jar`
 
 Без файла `gradle/wrapper/gradle-wrapper.jar` Gradle Wrapper не запустится.
 
-1. Сначала восстановите `gradle/wrapper/gradle-wrapper.jar` из Git или из доверенной копии того же репозитория.
-2. Если восстановить файл нельзя, используйте локально установленный Gradle той же линии, что указана в `gradle/wrapper/gradle-wrapper.properties`, и выполните `gradle wrapper`.
-3. После восстановления wrapper снова используйте обычные команды `./gradlew` или `gradlew.bat`.
-
-## Где смотреть дальше
-
-- Локальный запуск, сборка и базовые требования: этот `README.md`
-- Устойчивые архитектурные решения и правила зависимостей: [ARCHITECTURE.md](./ARCHITECTURE.md)
+1. Восстановите `gradle/wrapper/gradle-wrapper.jar` из Git или доверенной копии этого репозитория.
+2. Если восстановить файл нельзя, установите совместимую версию Gradle, указанную в `gradle/wrapper/gradle-wrapper.properties`, и выполните `gradle wrapper`.
+3. После восстановления снова используйте `./gradlew` или `gradlew.bat`.
