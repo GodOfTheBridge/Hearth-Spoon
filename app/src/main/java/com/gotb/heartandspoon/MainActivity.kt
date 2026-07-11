@@ -13,7 +13,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            HearthSpoonRoot(viewModel = viewModel)
+            HearthSpoonRoot(
+                viewModel = viewModel,
+                onExitRequested = ::finish,
+            )
         }
     }
 }

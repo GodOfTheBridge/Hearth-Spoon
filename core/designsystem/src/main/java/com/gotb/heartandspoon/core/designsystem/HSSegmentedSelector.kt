@@ -101,8 +101,9 @@ internal fun <T : Any> HSSegmentedSelector(
         val trackWidthPx = (selectorWidthPx - (contentPaddingPx * 2f)).coerceAtLeast(0f)
         val segmentWidthPx = trackWidthPx / options.size
         val selectedIndex = options.indexOfFirst { option -> option.value == selectedOption }
+        val optionValues = options.map { option -> option.value }
         val anchors =
-            remember(options, segmentWidthPx) {
+            remember(optionValues, segmentWidthPx) {
                 DraggableAnchors<T> {
                     options.forEachIndexed { index, option ->
                         option.value at (segmentWidthPx * index)
@@ -111,7 +112,7 @@ internal fun <T : Any> HSSegmentedSelector(
             }
 
         LaunchedEffect(anchors, segmentWidthPx, selectedOption) {
-            selectorState.updateAnchors(anchors, selectedOption)
+            selectorState.updateAnchors(anchors, selectorState.targetValue)
             if (
                 segmentWidthPx > 0f &&
                 selectorState.settledValue != selectedOption &&

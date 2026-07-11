@@ -11,7 +11,10 @@ import com.gotb.heartandspoon.core.model.isEffectivelyDark
 import com.gotb.heartandspoon.navigation.HearthSpoonAppNavigation
 
 @Composable
-fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
+fun HearthSpoonRoot(
+    viewModel: HearthSpoonRootViewModel,
+    onExitRequested: () -> Unit,
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val systemIsDarkTheme = isSystemInDarkTheme()
 
@@ -49,6 +52,7 @@ fun HearthSpoonRoot(viewModel: HearthSpoonRootViewModel) {
                 onThemeFamilyPreviewed = viewModel::previewThemeFamily,
                 onAppLanguagePreviewed = viewModel::previewAppLanguage,
                 onBackStackChanged = viewModel::setNavBackStack,
+                onExitRequested = onExitRequested,
             )
         }
     }
